@@ -1,0 +1,25 @@
+<div class="p-2">
+  <table class="table table-sm table-striped">
+    <tbody>
+      <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Supplier</th>
+        <th>Ratings</th>
+      </tr>
+      @for(product of products; track product.productId)
+      {
+      <tr>
+        <td>{{product.name}}</td>
+        <td>{{product.category}}</td>
+        <td>{{product.price}}</td>
+        <td>{{product.supplier?.name || 'None'}}</td>
+        <td>{{product.ratings?.length || 0}}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  <button class="btn btn-primary m-1" (click)="createProduct()"> Create Product </button> <button
+    class="btn btn-primary m-1" (click)="createProductAndSupplier()"> Create Product and Supplier </button>
+</div>
