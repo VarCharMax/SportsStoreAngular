@@ -3,14 +3,12 @@ import { Router, RouterLink } from "@angular/router";
 import { Subscription } from 'rxjs';
 import { Repository } from "../models/repository";
 import { Product } from "../models/product.model";
-import { ProductDetailComponent } from './productDetail.component';
 
 @Component({
   selector: "product-table",
   templateUrl: "productTable.component.html",
   imports: [
-    ProductDetailComponent,
-    // RouterLink
+    RouterLink
   ]
 })
 export class ProductTableComponent implements OnInit, OnDestroy {
@@ -35,7 +33,7 @@ export class ProductTableComponent implements OnInit, OnDestroy {
 
   selectProduct(id: number | undefined) {
     this.repo.getProduct(id!);
-    // this.router.navigateByUrl("/detail");
+    this.router.navigateByUrl("/detail");
   }
 
   ngOnDestroy() {

@@ -1,11 +1,12 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, RouterLink } from "@angular/router";
+import { Subscription } from 'rxjs';
 import { Repository } from "../models/repository";
 import { Product } from "../models/product.model";
-import { Router, ActivatedRoute } from "@angular/router";
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: "product-detail",
+  imports: [RouterLink],
   templateUrl: "productDetail.component.html"
 })
 export class ProductDetailComponent implements OnInit, OnDestroy {
