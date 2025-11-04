@@ -13,6 +13,6 @@ export class CategoryFilterComponent {
 
   setCategory(category: string | undefined) {
     this.repo.filter.category = category;
-    this.repo.getProducts();
+    this.repo.getProductsAsync();
   }
 }
