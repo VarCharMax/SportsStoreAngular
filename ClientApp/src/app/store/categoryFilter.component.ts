@@ -7,8 +7,6 @@ import { NavigationService } from "../models/navigation.service";
     templateUrl: "categoryFilter.component.html"
 })
 export class CategoryFilterComponent {
-    private repo: Repository = inject(Repository);
-
     service: NavigationService = inject(NavigationService);
 
     constructor() { }
