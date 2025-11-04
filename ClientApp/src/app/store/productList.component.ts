@@ -15,20 +15,27 @@ export class ProductListComponent implements OnInit, OnDestroy {
   private productsChanged: Subscription = new Subscription();
   private repo: Repository = inject(Repository);
 
-  products: Product[] = [];
-
   constructor() { }
 
   ngOnInit() {
     this.productsChanged = this.repo.productsChanged.subscribe({
       next: (productList) => {
-        this.products = productList;
+        // this.products = productList;
       },
       error: () => { }
     }
     );
 
     this.repo.getProductsAsync();
+  }
+
+  get products(): Product[] {
+    if (this.repo.getProductsCached() != null && this.repo.getProductsCached().length > 0) {
+      let pageIndex = (this.repo.paginationObject.currentPage - 1) * this.repo.paginationObject.productsPerPage;
+      return this.repo.getProductsCached().slice(pageIndex, pageIndex + this.repo.paginationObject.productsPerPage);
+    }
+
+    return [];
   }
 
   addToCart(product: Product) {

@@ -34,15 +34,13 @@ export class NavigationService {
           this.repository.filter.category = "";
           this.repository.paginationObject.currentPage = value;
         } else {
-          this.repository.filter.category
-            = active.params["categoryOrPage"];
+          this.repository.filter.category = active.params["categoryOrPage"];
           this.repository.paginationObject.currentPage = 1;
         }
       } else {
         let category = active.params["category"];
         this.repository.filter.category = category || "";
-        this.repository.paginationObject.currentPage
-          = Number.parseInt(active.params["page"]) || 1
+        this.repository.paginationObject.currentPage = Number.parseInt(active.params["page"]) || 1;
       }
 
       this.repository.getProductsAsync();
@@ -76,6 +74,7 @@ export class NavigationService {
   }
 
   set currentPage(newPage: number) {
+    console.log(`Category: ${this.currentCategory}, Page: ${newPage}`);
     if (this.currentCategory === "") {
       this.router.navigateByUrl(`/store/${newPage}`);
     } else {

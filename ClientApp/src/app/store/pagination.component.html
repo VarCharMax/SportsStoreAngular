@@ -1,3 +1,12 @@
-<h4>
-    Placeholder: Page Controls
-</h4>
+@if (pages.length > 1)
+{
+<div class="text-end my-2">
+  @for (page of pages; track page)
+  {
+  <button class="btn btn-outline-primary mx-1" [class.active]="navigation.currentPage == page"
+    (click)="navigation.currentPage = page">
+    {{page}}
+  </button>
+  }
+</div>
+}
