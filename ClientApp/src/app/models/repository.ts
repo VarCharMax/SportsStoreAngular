@@ -42,11 +42,19 @@ export class Repository {
     this.getSuppliers();
   }
 
-  getProductLocal(id: number): Product | undefined {
+  getProductsCached(): Product[] {
+    return this.products.slice();
+  }
+
+  getProductCached(id: number): Product | undefined {
     return this.products.find((p) => p.productId == id);
   }
 
-  getSupplierLocal(id: number): Supplier | undefined {
+  getSuppliersCached(): Supplier[] {
+    return this.suppliers.slice();
+  }
+
+  getSupplierCached(id: number): Supplier | undefined {
     return this.suppliers.find((s) => s.supplierId == id);
   }
 
@@ -296,6 +304,23 @@ export class Repository {
       error: (e) => {
         this.errorsChanged.next(e.error?.errors || e.error);
       }
+    });
+  }
+
+  replaceSupplier(supp: Supplier) {
+    let data = {
+      name: supp.name,
+      city: supp.city,
+      state: supp.state
+    };
+
+    this.http.put(`${suppliersUrl}/${supp.supplierId}`, data).subscribe(() => this.getProducts());
+  }
+
+  deleteSupplier(id: number) {
+    this.http.delete(`${suppliersUrl}/${id}`).subscribe(() => {
+      this.getProducts();
+      this.getSuppliers();
     });
   }
 }

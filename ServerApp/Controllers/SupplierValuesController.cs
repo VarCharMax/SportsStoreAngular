@@ -53,6 +53,7 @@ namespace ServerApp.Controllers {
       }
     }
 
+
     [HttpDelete("{id}")]
     public void DeleteSupplier(long id)
     {

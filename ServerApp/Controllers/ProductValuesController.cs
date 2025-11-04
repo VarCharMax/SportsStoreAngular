@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ServerApp.Models;
 using ServerApp.Models.BindingTargets;
+using System;
+using System.Net.NetworkInformation;
 
 namespace ServerApp.Controllers
 {
@@ -129,6 +133,37 @@ namespace ServerApp.Controllers
       { 
         return BadRequest(ModelState);
       }
+    }
+
+    [HttpPatch("{id}")]
+    public IActionResult UpdateProduct(long id, [FromBody] JsonPatchDocument<ProductData> patch)
+    {
+      Product product = context.Products.Include(p => p.Supplier).First(p => p.ProductId == id);
+      ProductData pdata = new() { Product = product };
+
+      patch.ApplyTo(pdata, ModelState);
+      
+      if (ModelState.IsValid && TryValidateModel(pdata))
+      {
+        if (product.Supplier != null && product.Supplier.SupplierId != 0)
+        {
+          context.Attach(product.Supplier);
+        }
+        
+        context.SaveChanges();
+        
+        return Ok();
+      }
+      else
+      { 
+        return BadRequest(ModelState);
+      }
+    }
+
+    [HttpDelete("{id}")]
+    public void DeleteProduct(long id){
+      context.Products.Remove(new Product { ProductId = id });
+      context.SaveChanges();
     }
   }
 }

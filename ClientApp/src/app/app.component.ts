@@ -3,9 +3,15 @@ import { Subscription } from 'rxjs';
 import { Repository } from './models/repository';
 import { Product } from './models/product.model';
 import { Supplier } from './models/supplier.model';
+import { ProductTableComponent } from './structure/productTable.component';
+import { CategoryFilterComponent } from './structure/categoryFilter.component';
 
 @Component({
   selector: 'app-root',
+  imports: [
+    ProductTableComponent,
+    CategoryFilterComponent
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
@@ -66,7 +72,7 @@ export class AppComponent implements OnInit, OnDestroy {
       "Watersports",
       "See what the fish are hiding",
       49.99,
-      this.repo.getSupplierLocal(1)
+      this.repo.getSupplierCached(1)
     ));
   }
 
@@ -74,6 +80,33 @@ export class AppComponent implements OnInit, OnDestroy {
     let s = new Supplier(0, "Rocket Shoe Corp", "Boston", "MA");
     let p = new Product(0, "Rocket-Powered Shoes", "Running", "Set a new record", 100, s);
     this.repo.createProductAndSupplier(p, s);
+  }
+
+  replaceProduct() {
+    let p = this.repo.getProductCached(1)!;
+    p.name = "Modified Product";
+    p.category = "Modified Category";
+    this.repo.replaceProduct(p);
+  }
+
+  updateProduct() {
+    let changes = new Map<string, any>();
+    changes.set("name", "Green Kayak");
+    changes.set("supplier", null);
+    this.repo.updateProduct(1, changes);
+  }
+
+  replaceSupplier() {
+    let s = new Supplier(3, "Modified Supplier", "New York", "NY");
+    this.repo.replaceSupplier(s);
+  }
+
+  deleteProduct() {
+    this.repo.deleteProduct(1);
+  }
+
+  deleteSupplier() {
+    this.repo.deleteSupplier(2);
   }
 
   ngOnDestroy() {
