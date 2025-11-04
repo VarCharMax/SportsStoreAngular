@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 })
 export class ProductDetailComponent implements OnInit, OnDestroy {
   private repo: Repository = inject(Repository);
-  private productChanged: Subscription = new Subscription();
+  private productRetrieved: Subscription = new Subscription();
 
   product: Product | undefined = undefined;
 
@@ -20,7 +20,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.productChanged = this.repo.productChanged.subscribe({
+    this.productRetrieved = this.repo.productRetrieved.subscribe({
       next: (prod) => {
         this.product = prod;
       },
@@ -28,15 +28,17 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     }
     );
 
+    /*
     let id = Number.parseInt(this.activeRoute.snapshot.params["id"]);
     if (id) {
       this.repo.getProduct(id);
     } else {
       this.router.navigateByUrl("/");
     }
+    */
   }
 
   ngOnDestroy() {
-    this.productChanged.unsubscribe();
+    this.productRetrieved.unsubscribe();
   }
 }

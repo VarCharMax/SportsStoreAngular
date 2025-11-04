@@ -1,12 +1,17 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { Subscription } from 'rxjs';
 import { Repository } from "../models/repository";
 import { Product } from "../models/product.model";
+import { ProductDetailComponent } from './productDetail.component';
 
 @Component({
   selector: "product-table",
-  templateUrl: "productTable.component.html"
+  templateUrl: "productTable.component.html",
+  imports: [
+    ProductDetailComponent,
+    // RouterLink
+  ]
 })
 export class ProductTableComponent implements OnInit, OnDestroy {
   private productsChanged: Subscription = new Subscription();
@@ -28,9 +33,9 @@ export class ProductTableComponent implements OnInit, OnDestroy {
     this.repo.getProducts();
   }
 
-  selectProduct(id: number) {
-    this.repo.getProduct(id);
-    this.router.navigateByUrl("/detail");
+  selectProduct(id: number | undefined) {
+    this.repo.getProduct(id!);
+    // this.router.navigateByUrl("/detail");
   }
 
   ngOnDestroy() {
