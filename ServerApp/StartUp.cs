@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+﻿using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using ServerApp.Helpers;
 using ServerApp.Models;
-using System;
-using System.Net.NetworkInformation;
 using System.Reflection;
 
 namespace SportsStore.Server

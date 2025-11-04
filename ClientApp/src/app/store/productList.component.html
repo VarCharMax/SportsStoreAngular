@@ -1,3 +1,26 @@
-<h4>
-    Paceholder: ProductList
-</h4>
+@if(products.length > 0)
+{
+<div>
+  @for(product of products; track product.productId)
+  {
+  <div class="card m-1 p-1 bg-light">
+    <h4>
+      {{product.name}}
+      <span class="float-end badge rounded-pill, bg-primary">
+        {{product.price | currency: "AUD":"symbol"}}
+      </span>
+    </h4>
+    <div class="card-text">
+      {{product.description}}
+      <button class="float-end btn btn-sm btn-success" (click)="addToCart(product)">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+  }
+</div>
+}
+@else
+{
+<h4 class="m-2">Waiting for data...</h4>
+}
