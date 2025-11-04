@@ -1,3 +1,15 @@
-<h4>
-    Placeholder: Category Filter
-</h4>
+<div class="m-1">
+  <button class="btn btn-outline-primary btn-block" [class.active]="service.currentCategory == ''"
+    (click)="service.currentCategory=''">
+    All Categories
+  </button>
+  @for(category of service.categories; track category)
+  {
+  <button class="btn btn-outline-primary btn-block"
+    [class.active]="service.currentCategory?.toLowerCase() == category.toLowerCase()"
+    (click)="service.currentCategory = category">
+    {{category}}
+  </button>
+  }
+
+</div>

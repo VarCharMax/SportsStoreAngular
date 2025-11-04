@@ -8,7 +8,8 @@ import { NavigationService } from "../models/navigation.service";
 })
 export class CategoryFilterComponent {
     private repo: Repository = inject(Repository);
-    private navService: NavigationService = inject(NavigationService);
+
+    service: NavigationService = inject(NavigationService);
 
     constructor() { }
 }
