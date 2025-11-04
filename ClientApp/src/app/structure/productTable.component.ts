@@ -10,17 +10,22 @@ import { Product } from "../models/product.model";
 })
 export class ProductTableComponent implements OnInit, OnDestroy {
   private productsChanged: Subscription = new Subscription();
-  private productChanged: Subscription = new Subscription();
   private repo: Repository = inject(Repository);
+
+  products: Product[] = [];
 
   constructor(private router: Router) { }
 
   ngOnInit() {
+    this.productsChanged = this.repo.productsChanged.subscribe({
+      next: (productList) => {
+        this.products = productList;
+      },
+      error: () => { }
+    }
+    );
 
-  }
-
-  get products(): Product[] {
-    return this.repo.getProductsCached();
+    this.repo.getProducts();
   }
 
   selectProduct(id: number) {
@@ -30,6 +35,5 @@ export class ProductTableComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.productsChanged.unsubscribe();
-    this.productChanged.unsubscribe();
   }
 }

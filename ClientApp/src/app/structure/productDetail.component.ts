@@ -1,27 +1,42 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Repository } from "../models/repository";
 import { Product } from "../models/product.model";
 import { Router, ActivatedRoute } from "@angular/router";
+import { Subscription } from 'rxjs';
 
 @Component({
-    selector: "product-detail",
-    templateUrl: "productDetail.component.html"
+  selector: "product-detail",
+  templateUrl: "productDetail.component.html"
 })
-export class ProductDetailComponent {
+export class ProductDetailComponent implements OnInit, OnDestroy {
+  private repo: Repository = inject(Repository);
+  private productChanged: Subscription = new Subscription();
 
-    constructor(private repo: Repository,
-                router: Router,
-                activeRoute: ActivatedRoute) {
+  product: Product | undefined = undefined;
 
-        let id = Number.parseInt(activeRoute.snapshot.params["id"]);
-        if (id) {
-            this.repo.getProduct(id);
-        } else {
-            router.navigateByUrl("/");
-        }
+  constructor(
+    private router: Router,
+    private activeRoute: ActivatedRoute) {
+  }
+
+  ngOnInit() {
+    this.productChanged = this.repo.productChanged.subscribe({
+      next: (prod) => {
+        this.product = prod;
+      },
+      error: () => { }
     }
+    );
 
-    get product(): Product {
-        return this.repo.product;
+    let id = Number.parseInt(this.activeRoute.snapshot.params["id"]);
+    if (id) {
+      this.repo.getProduct(id);
+    } else {
+      this.router.navigateByUrl("/");
     }
+  }
+
+  ngOnDestroy() {
+    this.productChanged.unsubscribe();
+  }
 }
