@@ -16,7 +16,7 @@
             <td>{{product.category}}</td>
             <td>{{product.price}}</td>
             <td>
-              <button class="btn btn-primary btn-sm" (click)="selectProduct(product.productId!)">
+              <button class="btn btn-primary btn-sm" [routerLink]="['/detail', product.productId]">
                 Details
               </button>
             </td>

@@ -5,5 +5,6 @@ import { ProductDetailComponent } from './structure/productDetail.component';
 export const routes: Routes = [
   { path: "table", component: ProductTableComponent },
   { path: "detail", component: ProductDetailComponent },
+  { path: "detail/:id", component: ProductDetailComponent },
   { path: "", component: ProductTableComponent }
 ];

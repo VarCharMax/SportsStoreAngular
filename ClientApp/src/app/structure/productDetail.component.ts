@@ -29,14 +29,12 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     }
     );
 
-    /*
     let id = Number.parseInt(this.activeRoute.snapshot.params["id"]);
     if (id) {
       this.repo.getProduct(id);
     } else {
       this.router.navigateByUrl("/");
     }
-    */
   }
 
   ngOnDestroy() {
