@@ -1,3 +1,7 @@
-<h5>
-    Placeholder: Ratings
-</h5>
+<span class="h6 ml-1">
+  @for(s of stars; track s)
+  {
+  <i [class]="s ? 'fas fa-star' : 'far fa-star'" [style.color]="s ? 'goldenrod' : 'gray'">
+  </i>
+  }
+</span>
