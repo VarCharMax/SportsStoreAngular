@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using ServerApp.Helpers;
 using ServerApp.Models;
+using System;
+using System.Net.NetworkInformation;
 using System.Reflection;
 
 namespace SportsStore.Server
@@ -83,6 +86,12 @@ namespace SportsStore.Server
                  pattern: "{controller=Home}/{action=Index}/{id?}");
         endpoints.MapRazorPages();
 
+        endpoints.MapControllerRoute(
+            name: "angular_fallback",
+            pattern: "{target:regex(table|detail)}/{*catchall}",
+            defaults: new { controller = "Home", action = "Index" }
+          );
+        
         if (env.IsDevelopment())
         {
           endpoints.MapOpenApi( );
