@@ -44,7 +44,7 @@ namespace ServerApp.Controllers
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Product>> GetProducts(string category = "", string search = "", bool related = false)
+    public ActionResult<IEnumerable<Product>> GetProducts(string category = "", string search = "", bool related = false, bool metadata = false)
     {
       IQueryable<Product> query = context.Products;
 
@@ -73,14 +73,12 @@ namespace ServerApp.Controllers
           }
         });
 
-        var dataList = data.ToList();
+        return metadata ? CreateMetadata(data) : Ok(data);
 
-        return new JsonResult(dataList);
       }
       else
       {
-        var queryList = query.ToList();
-        return new JsonResult(queryList);
+        return metadata ? CreateMetadata(query) : Ok(query);
       }
     }
 
@@ -161,6 +159,17 @@ namespace ServerApp.Controllers
     public void DeleteProduct(long id){
       context.Products.Remove(new Product { ProductId = id });
       context.SaveChanges();
+    }
+
+    private OkObjectResult CreateMetadata(IEnumerable<Product> products)
+    {
+      //Return all products along with a list of associated categories.
+      return Ok(new
+      {
+        data = products,
+        categories = context.Products.Select(p => p.Category).Distinct().OrderBy(c => c)
+      }
+      );
     }
   }
 }

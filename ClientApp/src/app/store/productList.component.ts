@@ -12,7 +12,6 @@ import { Product } from "../models/product.model";
   templateUrl: "productList.component.html"
 })
 export class ProductListComponent implements OnInit, OnDestroy {
-
   private productsChanged: Subscription = new Subscription();
   private repo: Repository = inject(Repository);
 
@@ -33,7 +32,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   addToCart(product: Product) {
-    // throw new Error('Method not implemented.');
+
   }
 
   ngOnDestroy() {

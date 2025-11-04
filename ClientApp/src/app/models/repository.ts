@@ -8,6 +8,11 @@ import { Supplier } from './supplier.model';
 const productsUrl = 'api/products';
 const suppliersUrl = 'api/suppliers';
 
+type productsMetadata = {
+  data: Product[],
+  categories: string[];
+}
+
 @Injectable({
   providedIn: 'root'
 }
@@ -16,6 +21,7 @@ export class Repository {
   private products: Product[] = [];
   private suppliers: Supplier[] = [];
   private product: Product = new Product();
+  private categories: string[] = [];
   private supplier: Supplier = new Supplier();
 
   /*
@@ -61,7 +67,7 @@ export class Repository {
   /*
   * Get collections
   */
-  getProducts(related = false): void {
+  getProducts(): void {
 
     let url = `${productsUrl}?related=${this.filter.related}`;
 
@@ -73,12 +79,15 @@ export class Repository {
       url += `&search=${this.filter.search}`;
     }
 
-    this.http.get<Product[]>(url).subscribe({
-      next: (p) => {
+    url += "&metadata=true";
+
+    this.http.get<productsMetadata>(url).subscribe({
+      next: (md) => {
 
         this.products = [];
+        this.categories = [];
 
-        p.forEach(prod => {
+        md.data.forEach(prod => {
           let newProduct: Product = new Product(
             prod.productId,
             prod.name,
@@ -90,6 +99,10 @@ export class Repository {
           );
 
           this.products.push(newProduct);
+        });
+
+        md.categories.forEach(cat => {
+          this.categories.push(cat);
         });
 
         this.productsChanged.next(this.products.slice());
