@@ -3,6 +3,7 @@ import { CurrencyPipe } from "@angular/common";
 import { Repository } from "../models/repository";
 import { Product } from "../models/product.model";
 import { RatingsComponent } from "./ratings.component";
+import { Cart } from "../models/cart.model";
 
 @Component({
   selector: "store-product-list",
@@ -14,6 +15,7 @@ import { RatingsComponent } from "./ratings.component";
 })
 export class ProductListComponent implements OnInit {
   private repo: Repository = inject(Repository);
+  private cart: Cart = inject(Cart);
 
   constructor() { }
 

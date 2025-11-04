@@ -9,5 +9,5 @@ export class Product {
         public description?: string,
         public price?: number,
         public supplier?: Supplier,
-        public ratings?: Rating[] ) { }
+        public ratings?: Rating[]) { }
 }
