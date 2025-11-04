@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
-// import { NavigationService } from '../models/navigation.service';
 import { Repository } from "../models/repository";
+import { NavigationService } from "../models/navigation.service";
 
 @Component({
     selector: "store-categoryfilter",
@@ -8,6 +8,7 @@ import { Repository } from "../models/repository";
 })
 export class CategoryFilterComponent {
     private repo: Repository = inject(Repository);
+    private navService: NavigationService = inject(NavigationService);
 
     constructor() { }
 }

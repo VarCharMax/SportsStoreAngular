@@ -28,7 +28,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     }
     );
 
-    this.repo.getProducts();
+    this.repo.getProductsAsync();
   }
 
   addToCart(product: Product) {

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
+import { Filter, Pagination } from './configClasses.repository';
 import { Product } from './product.model';
-import { Filter } from './configClasses.repository';
 import { Supplier } from './supplier.model';
 
 const productsUrl = 'api/products';
@@ -40,12 +40,15 @@ export class Repository {
     [label: string]: Array<string>;
   }>();
   filter: Filter = new Filter();
+  paginationObject = new Pagination();
 
   constructor(private http: HttpClient) {
-    // this.filter.category = "soccer";
     this.filter.related = true;
-    //this.getProducts(true);
-    this.getSuppliers();
+    this.getSuppliersAsync();
+  }
+
+  getCategoriesCached(): string[] {
+    return this.categories.slice();
   }
 
   getProductsCached(): Product[] {
@@ -67,7 +70,7 @@ export class Repository {
   /*
   * Get collections
   */
-  getProducts(): void {
+  getProductsAsync(): void {
 
     let url = `${productsUrl}?related=${this.filter.related}`;
 
@@ -116,7 +119,7 @@ export class Repository {
   /*
   * Get entity
   */
-  getProduct(id: number): void {
+  getProductAsync(id: number): void {
     this.http.get<Product>(`${productsUrl}/${id}`).subscribe({
       next: (prod) => {
 
@@ -141,7 +144,7 @@ export class Repository {
   /*
   * Add entity
   */
-  createProduct(prod: Product): void {
+  createProductAsync(prod: Product): void {
 
     let data = {
       name: prod.name,
@@ -187,7 +190,7 @@ export class Repository {
   /*
   * Replace Entity
   */
-  replaceProduct(product: Product): void {
+  replaceProductAsync(product: Product): void {
     this.http.put<boolean>(`${productsUrl}/${product.productId}`, product).subscribe({
       next: (result) => {
         if (result == true) {
@@ -222,7 +225,7 @@ export class Repository {
   /*
   * Update entity
   */
-  updateProduct(id: number, changes: Map<string, any>): void {
+  updateProductAsync(id: number, changes: Map<string, any>): void {
     let patch: { op: string; path: string; value: any }[] = [];
 
     // Define the patch operations. All are 'replace' operations.
@@ -256,7 +259,7 @@ export class Repository {
     });
   }
 
-  deleteProduct(id: number): void {
+  deleteProductAsync(id: number): void {
     this.http.delete<boolean>(`${productsUrl}/${id}`).subscribe({
       next: (result) => {
         if (result === true) {
@@ -286,7 +289,7 @@ export class Repository {
         this.suppliersChanged.next(this.suppliers.slice());
 
         if (prod != null) {
-          this.createProduct(prod);
+          this.createProductAsync(prod);
         }
       },
       error: (e) => {
@@ -295,7 +298,7 @@ export class Repository {
     });
   }
 
-  getSuppliers() {
+  getSuppliersAsync() {
     this.http.get<Supplier[]>(suppliersUrl).subscribe({
       next: (s) => {
         this.suppliers = [];
@@ -327,13 +330,13 @@ export class Repository {
       state: supp.state
     };
 
-    this.http.put(`${suppliersUrl}/${supp.supplierId}`, data).subscribe(() => this.getProducts());
+    this.http.put(`${suppliersUrl}/${supp.supplierId}`, data).subscribe(() => this.getProductsAsync());
   }
 
   deleteSupplier(id: number) {
     this.http.delete(`${suppliersUrl}/${id}`).subscribe(() => {
-      this.getProducts();
-      this.getSuppliers();
+      this.getProductsAsync();
+      this.getSuppliersAsync();
     });
   }
 }
