@@ -31,11 +31,6 @@ export class ProductTableComponent implements OnInit, OnDestroy {
     this.repo.getProducts();
   }
 
-  selectProduct(id: number | undefined) {
-    this.repo.getProduct(id!);
-    this.router.navigateByUrl("/detail");
-  }
-
   ngOnDestroy() {
     this.productsChanged.unsubscribe();
   }
