@@ -78,7 +78,7 @@ export class Repository {
   }
 
   /*
-  * Get collections
+  * Get collections async.
   */
   getProductsAsync(): void {
 
