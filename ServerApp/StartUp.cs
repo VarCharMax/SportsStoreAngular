@@ -19,14 +19,14 @@ namespace SportsStore.Server
 
     public void ConfigureServices(IServiceCollection services)
     {
-      string? connectionstring = Configuration["ConnectionStrings:DefaultConnection"];
-      if (string.IsNullOrEmpty(connectionstring))
+      string? connectionString = Configuration["ConnectionStrings:DefaultConnection"];
+      if (string.IsNullOrEmpty(connectionString))
       {
         throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
       }
 
       services.AddDbContext<DataContext>(options =>
-        options.UseSqlServer(connectionstring));
+        options.UseSqlServer(connectionString));
 
       services.AddControllersWithViews(options =>
         {
@@ -51,6 +51,21 @@ namespace SportsStore.Server
       {
         services.AddOpenApi();
       }
+
+      services.AddDistributedSqlServerCache(options => {
+          options.ConnectionString = connectionString;
+          options.SchemaName = "dbo";
+          options.TableName = "SessionData"; 
+        }
+      );
+      
+      services.AddSession(options => {
+          options.Cookie.Name = "SportsStore.Session";
+          options.IdleTimeout = TimeSpan.FromHours(48);
+          options.Cookie.HttpOnly = false;
+          options.Cookie.IsEssential = true;
+        }
+      );
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider services)
@@ -67,17 +82,14 @@ namespace SportsStore.Server
 
       app.UseHttpsRedirection();
       app.UseStaticFiles();
+      app.UseSession();
       app.UseRouting();
-      // app.UseDefaultFiles();
 
       //Must be declared between UseRouting and UseEndpoints.
       app.UseAuthorization();
 
       app.UseEndpoints(endpoints =>
       {
-        // endpoints.MapStaticAssets();
-        // endpoints.MapFallbackToFile("/index.html");
-
         endpoints.MapControllerRoute(
                  name: "default",
                  pattern: "{controller=Home}/{action=Index}/{id?}");
