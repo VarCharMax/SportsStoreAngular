@@ -4,15 +4,15 @@ import { Router, RouterLink } from '@angular/router';
 import { Order } from '../../models/order.model';
 
 @Component({
-  templateUrl: 'checkoutDetails.component.html',
+  templateUrl: 'checkoutPayment.component.html',
   imports: [RouterLink, FormsModule],
 })
-export class CheckoutDetailsComponent {
+export class CheckoutPaymentComponent {
   order: Order = inject(Order);
 
   constructor(private router: Router) {
-    if (this.order.products.length == 0) {
-      this.router.navigateByUrl('/cart');
+    if (this.order.name == null || this.order.address == null) {
+      router.navigateByUrl('/checkout/step1');
     }
   }
 }
