@@ -130,7 +130,6 @@ namespace SportsStore.Server
         });
 
         SeedData.SeedDatabase(services.GetRequiredService<DataContext>());
-
       }
     }
   }
