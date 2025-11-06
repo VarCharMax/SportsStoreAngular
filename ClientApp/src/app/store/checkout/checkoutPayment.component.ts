@@ -11,7 +11,7 @@ export class CheckoutPaymentComponent {
   order: Order = inject(Order);
 
   constructor(private router: Router) {
-    if (this.order.name == null || this.order.address == null) {
+    if (this.order.name == undefined || this.order.address == undefined) {
       router.navigateByUrl('/checkout/step1');
     }
   }

@@ -16,17 +16,19 @@ type OrderSession = {
   providedIn: 'root',
 })
 export class Order {
+  private repo: Repository = inject(Repository);
+
+  cart: Cart = inject(Cart);
+
   orderId: number | undefined;
   name: string | undefined;
   address: string | undefined;
-  payment: Payment = new Payment();
   submitted: boolean = false;
   shipped: boolean = false;
+  payment: Payment = new Payment();
   orderConfirmation: OrderConfirmation | undefined;
 
-  private repo: Repository = inject(Repository);
-
-  constructor(public cart: Cart, router: Router) {
+  constructor(router: Router) {
     router.events
       .pipe(filter((event) => event instanceof NavigationStart))
       .subscribe((event) => {
@@ -47,8 +49,8 @@ export class Order {
 
     this.repo.getSessionData<OrderSession>('checkout').subscribe((data) => {
       if (data != null) {
-        this.name = data.name!;
-        this.address = data.address!;
+        this.name = data.name;
+        this.address = data.address;
         this.payment!.cardNumber = data.cardNumber;
         this.payment!.cardExpiry = data.cardExpiry;
         this.payment!.cardSecurityCode = data.cardSecurityCode;
