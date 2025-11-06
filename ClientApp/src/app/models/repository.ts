@@ -2,12 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Filter, Pagination } from './configClasses.repository';
+import { Order, OrderConfirmation } from './order.model';
 import { Product } from './product.model';
 import { Supplier } from './supplier.model';
 
 const productsUrl = 'api/products';
 const suppliersUrl = 'api/suppliers';
 const sessionUrl = 'api/session';
+const ordersUrl = 'api/orders';
 
 type productsMetadata = {
   data: Product[];
@@ -19,10 +21,11 @@ type productsMetadata = {
 })
 export class Repository {
   private products: Product[] = [];
-  private suppliers: Supplier[] = [];
   private product: Product = new Product();
   private categories: string[] = [];
+  private suppliers: Supplier[] = [];
   private supplier: Supplier = new Supplier();
+  private orders: Order[] = [];
 
   /*
    * productsChanged - called when list is added to or subtracted from.
@@ -36,6 +39,7 @@ export class Repository {
   productRetrieved: Subject<Product> = new Subject<Product>();
   supplierChanged: Subject<Supplier> = new Subject<Supplier>();
   suppliersChanged: Subject<Supplier[]> = new Subject<Supplier[]>();
+  ordersChanged: Subject<Order[]> = new Subject<Order[]>();
   errorsChanged: Subject<{ [label: string]: Array<string> }> = new Subject<{
     [label: string]: Array<string>;
   }>();
@@ -74,10 +78,57 @@ export class Repository {
   getSupplierCached(id: number): Supplier | undefined {
     return this.suppliers.find((s) => s.supplierId == id);
   }
+  getOrdersCached(): Order[] {
+    return this.orders;
+  }
 
   /*
    * Get collections async.
    */
+
+  getOrdersAsync() {
+    this.http.get<Order[]>(ordersUrl).subscribe({
+      next: (data) => {
+        this.orders = data;
+        this.ordersChanged.next(this.orders.slice());
+      },
+      error: (e) => {
+        this.errorsChanged.next(e.error?.errors || e.error);
+      },
+    });
+  }
+
+  createOrder(order: Order) {
+    this.http
+      .post<OrderConfirmation>(ordersUrl, {
+        name: order.name,
+        address: order.address,
+        payment: order.payment,
+        products: order.products,
+      })
+      .subscribe({
+        next: (data) => {
+          order.orderConfirmation = data;
+          order.cart.clear();
+          order.clear();
+        },
+        error: (e) => {
+          this.errorsChanged.next(e.error?.errors || e.error);
+        },
+      });
+  }
+
+  shipOrder(order: Order) {
+    this.http.post(`${ordersUrl}/${order.orderId}`, {}).subscribe({
+      next: () => {
+        this.getOrdersAsync();
+      },
+      error: (e) => {
+        this.errorsChanged.next(e.error?.errors || e.error);
+      },
+    });
+  }
+
   getProductsAsync(): void {
     let url = `${productsUrl}?related=${this.filter.related}`;
 
