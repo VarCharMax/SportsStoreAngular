@@ -1,6 +1,5 @@
 <span class="h6 ml-1">
-  @for(s of stars; track s)
-  {
+  @for(s of stars; track $index) {
   <i [class]="s ? 'fas fa-star' : 'far fa-star'" [style.color]="s ? 'goldenrod' : 'gray'">
   </i>
   }

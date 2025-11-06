@@ -1,15 +1,16 @@
 <div class="d-grid gap-2 col-8">
-  <button class="btn btn-outline-primary" [class.active]="service.currentCategory == ''"
-    (click)="service.currentCategory=''">
+  <button
+    class="btn btn-outline-primary"
+    [class.active]="service.currentCategory == ''"
+    (click)="service.currentCategory = ''">
     All Categories
   </button>
-  @for(category of service.categories; track category)
-  {
-  <button class="btn btn-outline-primary"
+  @for(category of service.categories; track category) {
+  <button
+    class="btn btn-outline-primary"
     [class.active]="service.currentCategory?.toLowerCase() == category.toLowerCase()"
     (click)="service.currentCategory = category">
-    {{category}}
+    {{ category }}
   </button>
   }
-
 </div>

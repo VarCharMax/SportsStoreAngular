@@ -1,31 +1,33 @@
-import { Component, inject, OnInit } from "@angular/core";
-import { CurrencyPipe } from "@angular/common";
-import { Repository } from "../models/repository";
-import { Product } from "../models/product.model";
-import { RatingsComponent } from "./ratings.component";
-import { Cart } from "../models/cart.model";
+import { CurrencyPipe } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { Cart } from '../models/cart.model';
+import { Product } from '../models/product.model';
+import { Repository } from '../models/repository';
+import { RatingsComponent } from './ratings.component';
 
 @Component({
-  selector: "store-product-list",
-  imports: [
-    CurrencyPipe,
-    RatingsComponent
-  ],
-  templateUrl: "productList.component.html"
+  selector: 'store-product-list',
+  imports: [CurrencyPipe, RatingsComponent],
+  templateUrl: 'productList.component.html',
 })
 export class ProductListComponent implements OnInit {
   private repo: Repository = inject(Repository);
   private cart: Cart = inject(Cart);
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     this.repo.getProductsAsync();
   }
 
   get products(): Product[] {
-    if (this.repo.getProductsCached() != null && this.repo.getProductsCached().length > 0) {
-      let pageIndex = (this.repo.paginationObject.currentPage - 1) * this.repo.paginationObject.productsPerPage;
+    if (
+      this.repo.getProductsCached() != null &&
+      this.repo.getProductsCached().length > 0
+    ) {
+      let pageIndex =
+        (this.repo.paginationObject.currentPage - 1) *
+        this.repo.paginationObject.productsPerPage;
       return this.repo
         .getProductsCached()
         .slice(pageIndex, pageIndex + this.repo.paginationObject.productsPerPage);
@@ -35,6 +37,6 @@ export class ProductListComponent implements OnInit {
   }
 
   addToCart(product: Product) {
-
+    this.cart.addProduct(product);
   }
 }
