@@ -1,11 +1,10 @@
-import { inject, Injectable } from "@angular/core";
-import { Product } from "./product.model";
+import { inject, Injectable } from '@angular/core';
+import { Product } from './product.model';
 import { Repository } from './repository';
 
 @Injectable({
-  providedIn: 'root'
-}
-)
+  providedIn: 'root',
+})
 export class Cart {
   private repo: Repository = inject(Repository);
 
@@ -14,35 +13,34 @@ export class Cart {
   totalPrice: number = 0;
 
   constructor() {
-    this.repo.getSessionData<ProductSelection[]>("cart").subscribe(cartData => {
+    this.repo.getSessionData<ProductSelection[]>('cart').subscribe((cartData) => {
       if (cartData != null) {
-        cartData.forEach(item => this.selections.push(item));
+        cartData.forEach((item) => this.selections.push(item));
         this.update(false);
       }
     });
   }
 
   addProduct(product: Product) {
-    let selection = this.selections
-      .find(ps => ps.productId == product.productId);
+    let selection = this.selections.find((ps) => ps.productId == product.productId);
     if (selection) {
       selection.quantity++;
     } else {
-      this.selections.push(new ProductSelection(this,
-        product.productId, product.name,
-        product.price, 1));
+      this.selections.push(
+        new ProductSelection(this, product.productId, product.name, product.price, 1),
+      );
     }
     this.update();
   }
 
   updateQuantity(productId: number, quantity: number) {
     if (quantity > 0) {
-      let selection = this.selections.find(ps => ps.productId == productId);
+      let selection = this.selections.find((ps) => ps.productId == productId);
       if (selection) {
         selection.quantity = quantity;
       }
     } else {
-      let index = this.selections.findIndex(ps => ps.productId == productId);
+      let index = this.selections.findIndex((ps) => ps.productId == productId);
       if (index != -1) {
         this.selections.splice(index, 1);
       }
@@ -56,28 +54,36 @@ export class Cart {
   }
 
   update(storeData: boolean = true) {
-    this.itemCount = this.selections.map(ps => ps.quantity)
+    this.itemCount = this.selections
+      .map((ps) => ps.quantity)
       .reduce((prev, curr) => prev + curr, 0);
-    this.totalPrice = this.selections.map(ps => ps.price! * ps.quantity)
+    this.totalPrice = this.selections
+      .map((ps) => ps.price! * ps.quantity)
       .reduce((prev, curr) => prev + curr, 0);
     if (storeData) {
-      this.repo.storeSessionData("cart", this.selections.map(s => {
-        return {
-          productId: s.productId, name: s.name,
-          price: s.price, quantity: s.quantity
-        }
-      }));
+      this.repo.storeSessionData(
+        'cart',
+        this.selections.map((s) => {
+          return {
+            productId: s.productId,
+            name: s.name,
+            price: s.price,
+            quantity: s.quantity,
+          };
+        }),
+      );
     }
   }
 }
 
 export class ProductSelection {
-
-  constructor(public cart: Cart,
+  constructor(
+    public cart: Cart,
     public productId?: number,
     public name?: string,
     public price?: number,
-    private quantityValue?: number) { }
+    private quantityValue?: number,
+  ) {}
 
   get quantity() {
     return this.quantityValue!;

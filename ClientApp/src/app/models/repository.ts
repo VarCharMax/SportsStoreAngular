@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Filter, Pagination } from './configClasses.repository';
 import { Product } from './product.model';
@@ -10,14 +10,13 @@ const suppliersUrl = 'api/suppliers';
 const sessionUrl = 'api/session';
 
 type productsMetadata = {
-  data: Product[],
+  data: Product[];
   categories: string[];
-}
+};
 
 @Injectable({
-  providedIn: 'root'
-}
-)
+  providedIn: 'root',
+})
 export class Repository {
   private products: Product[] = [];
   private suppliers: Supplier[] = [];
@@ -26,11 +25,11 @@ export class Repository {
   private supplier: Supplier = new Supplier();
 
   /*
-  * productsChanged - called when list is added to or subtracted from.
-  * productChanged - called when product changes state.
-  * productChanged does not get called when product is created.
-  * No method should call both events, as this this will lead to edit-warring over product.
-  */
+   * productsChanged - called when list is added to or subtracted from.
+   * productChanged - called when product changes state.
+   * productChanged does not get called when product is created.
+   * No method should call both events, as this this will lead to edit-warring over product.
+   */
 
   productChanged: Subject<Product> = new Subject<Product>();
   productsChanged: Subject<Product[]> = new Subject<Product[]>();
@@ -49,8 +48,7 @@ export class Repository {
   }
 
   storeSessionData<T>(dataType: string, data: T) {
-    return this.http.post(`${sessionUrl}/${dataType}`, data)
-      .subscribe(response => { });
+    return this.http.post(`${sessionUrl}/${dataType}`, data).subscribe((response) => {}); // Forces HttpClient to send request.
   }
 
   getSessionData<T>(dataType: string): Observable<T> {
@@ -78,10 +76,9 @@ export class Repository {
   }
 
   /*
-  * Get collections async.
-  */
+   * Get collections async.
+   */
   getProductsAsync(): void {
-
     let url = `${productsUrl}?related=${this.filter.related}`;
 
     if (this.filter.category) {
@@ -92,15 +89,14 @@ export class Repository {
       url += `&search=${this.filter.search}`;
     }
 
-    url += "&metadata=true";
+    url += '&metadata=true';
 
     this.http.get<productsMetadata>(url).subscribe({
       next: (md) => {
-
         this.products = [];
         this.categories = [];
 
-        md.data.forEach(prod => {
+        md.data.forEach((prod) => {
           let newProduct: Product = new Product(
             prod.productId,
             prod.name,
@@ -108,13 +104,13 @@ export class Repository {
             prod.description,
             prod.price,
             prod.supplier,
-            prod.ratings
+            prod.ratings,
           );
 
           this.products.push(newProduct);
         });
 
-        md.categories.forEach(cat => {
+        md.categories.forEach((cat) => {
           this.categories.push(cat);
         });
 
@@ -122,17 +118,16 @@ export class Repository {
       },
       error: (e) => {
         this.errorsChanged.next(e.error?.errors || e.error);
-      }
+      },
     });
   }
 
   /*
-  * Get entity
-  */
+   * Get entity
+   */
   getProductAsync(id: number): void {
     this.http.get<Product>(`${productsUrl}/${id}`).subscribe({
       next: (prod) => {
-
         this.product = new Product(
           prod.productId,
           prod.name,
@@ -140,37 +135,37 @@ export class Repository {
           prod.description,
           prod.price,
           prod.supplier,
-          prod.ratings
+          prod.ratings,
         );
 
         this.productRetrieved.next(this.product);
       },
       error: (e) => {
         this.errorsChanged.next(e.error?.errors || e.error);
-      }
+      },
     });
   }
 
   /*
-  * Add entity
-  */
+   * Add entity
+   */
   createProductAsync(prod: Product): void {
-
     let data = {
       name: prod.name,
       category: prod.category,
       description: prod.description,
       price: prod.price,
-      supplierId: prod.supplier ? prod.supplier.supplierId : 0
+      supplierId: prod.supplier ? prod.supplier.supplierId : 0,
     };
 
     this.http.post<number>(productsUrl, data).subscribe({
       next: (id) => {
-
         let supplier: Supplier | undefined = undefined;
 
         if (prod.supplier) {
-          let index = this.suppliers.findIndex((s) => s.supplierId === prod.supplier!.supplierId);
+          let index = this.suppliers.findIndex(
+            (s) => s.supplierId === prod.supplier!.supplierId,
+          );
           if (index > -1) {
             supplier = this.suppliers[index];
           }
@@ -183,28 +178,28 @@ export class Repository {
           prod.description,
           prod.price,
           supplier,
-          prod.ratings);
+          prod.ratings,
+        );
 
         //Don't call change event on new product.
-        this.product = newProduct
+        this.product = newProduct;
         this.products.push(newProduct);
 
         this.productsChanged.next(this.products.slice());
       },
       error: (e) => {
         this.errorsChanged.next(e.error?.errors || e.error);
-      }
+      },
     });
   }
 
   /*
-  * Replace Entity
-  */
+   * Replace Entity
+   */
   replaceProductAsync(product: Product): void {
     this.http.put<boolean>(`${productsUrl}/${product.productId}`, product).subscribe({
       next: (result) => {
         if (result == true) {
-
           let index = this.products.findIndex((t) => t.productId === product.productId);
 
           if (index !== -1) {
@@ -215,32 +210,32 @@ export class Repository {
               product.description,
               product.price,
               product.supplier,
-              product.ratings
+              product.ratings,
             );
 
             this.products[index] = updateProduct;
 
             this.productChanged.next(updateProduct);
           } else {
-            this.errorsChanged.next({ Error: ["Update operation encountered an error"] });
+            this.errorsChanged.next({ Error: ['Update operation encountered an error'] });
           }
         }
       },
       error: (e) => {
         this.errorsChanged.next(e.error?.errors || e.error);
-      }
+      },
     });
   }
 
   /*
-  * Update entity
-  */
+   * Update entity
+   */
   updateProductAsync(id: number, changes: Map<string, any>): void {
     let patch: { op: string; path: string; value: any }[] = [];
 
     // Define the patch operations. All are 'replace' operations.
     changes.forEach((value, key) =>
-      patch.push({ op: 'replace', path: key, value: value })
+      patch.push({ op: 'replace', path: key, value: value }),
     );
 
     this.http.patch<boolean>(`${productsUrl}/${id}`, patch).subscribe({
@@ -279,7 +274,7 @@ export class Repository {
       },
       error: (e) => {
         this.errorsChanged.next(e.error?.errors || e.error);
-      }
+      },
     });
   }
 
@@ -287,7 +282,7 @@ export class Repository {
     let data = {
       name: supp.name,
       city: supp.city,
-      state: supp.state
+      state: supp.state,
     };
 
     this.http.post<number>(suppliersUrl, supp).subscribe({
@@ -304,7 +299,7 @@ export class Repository {
       },
       error: (e) => {
         this.errorsChanged.next(e.error?.errors || e.error);
-      }
+      },
     });
   }
 
@@ -319,7 +314,7 @@ export class Repository {
             sup.name,
             sup.city,
             sup.state,
-            sup.products
+            sup.products,
           );
 
           this.suppliers.push(supplier);
@@ -329,7 +324,7 @@ export class Repository {
       },
       error: (e) => {
         this.errorsChanged.next(e.error?.errors || e.error);
-      }
+      },
     });
   }
 
@@ -337,10 +332,12 @@ export class Repository {
     let data = {
       name: supp.name,
       city: supp.city,
-      state: supp.state
+      state: supp.state,
     };
 
-    this.http.put(`${suppliersUrl}/${supp.supplierId}`, data).subscribe(() => this.getProductsAsync());
+    this.http
+      .put(`${suppliersUrl}/${supp.supplierId}`, data)
+      .subscribe(() => this.getProductsAsync());
   }
 
   deleteSupplier(id: number) {
