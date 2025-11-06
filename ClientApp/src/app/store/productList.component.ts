@@ -22,7 +22,7 @@ export class ProductListComponent implements OnInit {
 
   get products(): Product[] {
     if (
-      this.repo.getProductsCached() != null &&
+      // this.repo.getProductsCached() != null &&
       this.repo.getProductsCached().length > 0
     ) {
       let pageIndex =

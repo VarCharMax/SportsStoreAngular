@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Cart } from './cart.model';
@@ -19,21 +19,23 @@ export class Order {
   orderId: number | undefined;
   name: string | undefined;
   address: string | undefined;
-  payment: Payment | undefined;
+  payment: Payment = new Payment();
   submitted: boolean = false;
   shipped: boolean = false;
   orderConfirmation: OrderConfirmation | undefined;
 
-  constructor(private repo: Repository, public cart: Cart, router: Router) {
+  private repo: Repository = inject(Repository);
+
+  constructor(public cart: Cart, router: Router) {
     router.events
       .pipe(filter((event) => event instanceof NavigationStart))
       .subscribe((event) => {
         if (
           router.url.startsWith('/checkout') &&
-          this.name != null &&
-          this.address != null
+          this.name != undefined &&
+          this.address != undefined
         ) {
-          repo.storeSessionData<OrderSession>('checkout', {
+          this.repo.storeSessionData<OrderSession>('checkout', {
             name: this.name,
             address: this.address,
             cardNumber: this.payment!.cardNumber,
@@ -43,7 +45,7 @@ export class Order {
         }
       });
 
-    repo.getSessionData<OrderSession>('checkout').subscribe((data) => {
+    this.repo.getSessionData<OrderSession>('checkout').subscribe((data) => {
       if (data != null) {
         this.name = data.name!;
         this.address = data.address!;
