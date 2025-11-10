@@ -17,6 +17,6 @@ export class OrderAdminComponent {
   }
 
   markShipped(order: Order) {
-    this.repo.shipOrder(order);
+    this.repo.shipOrderAsync(order);
   }
 }

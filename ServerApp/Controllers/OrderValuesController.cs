@@ -21,38 +21,64 @@ namespace ServerApp.Controllers
         .Include(o => o.Payment);
     }
 
-    [HttpPost("{id}")] public void MarkShipped(long id) {
+    [HttpPost("{id}")]
+    public ActionResult<bool> MarkShipped(long id)
+    {
+      bool shipped = false;
 
-      Order? order = context.Orders.Find(id);
+      try
+      {
+        Order? order = context.Orders.Find(id);
 
-      if (order != null) {
-        order.Shipped = true;
-        context.SaveChanges();
+        if (order != null)
+        {
+          order.Shipped = true;
+          context.SaveChanges();
+        }
+        else
+        {
+          shipped = false; 
+        }
       }
+      catch (Exception)
+      {
+        shipped = false;
+      }
+
+      return Ok(shipped);
     }
 
     [HttpPost]
-    public IActionResult CreateOrder([FromBody] Order order)
+    public ActionResult CreateOrder([FromBody] Order order)
     {
       if (ModelState.IsValid)
       {
         order.OrderId = 0; order.Shipped = false;
         order.Payment.Total = GetPrice(order.Products);
 
-        ProcessPayment(order.Payment);
-        
-        if (order.Payment.AuthCode != null) {
-          context.Add(order);
-          context.SaveChanges();
-          return Ok(new { 
+        try
+        {
+          ProcessPayment(order.Payment);
+
+          if (order.Payment.AuthCode != null)
+          {
+            context.Add(order);
+            context.SaveChanges();
+            return Ok(new 
+            {
               orderId = order.OrderId,
               authCode = order.Payment.AuthCode,
               amount = order.Payment.Total
             }
-          );
+            );
+          }
+          else
+          {
+            return BadRequest("Payment rejected");
+          }
         }
-        else 
-        { 
+        catch (Exception)
+        {
           return BadRequest("Payment rejected");
         }
       }

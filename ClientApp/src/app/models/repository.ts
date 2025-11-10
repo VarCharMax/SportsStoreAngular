@@ -123,10 +123,14 @@ export class Repository {
       });
   }
 
-  shipOrder(order: Order) {
-    this.http.post(`${ordersUrl}/${order.orderId}`, {}).subscribe({
-      next: () => {
-        this.getOrdersAsync();
+  shipOrderAsync(order: Order) {
+    this.http.post<boolean>(`${ordersUrl}/${order.orderId}`, {}).subscribe({
+      next: (result) => {
+        if (result == true) {
+          this.getOrdersAsync();
+        } else {
+          this.errorsChanged.next({ Error: ['Ship operation encountered an error.'] });
+        }
       },
       error: (e) => {
         this.errorsChanged.next(e.error?.errors || e.error);
