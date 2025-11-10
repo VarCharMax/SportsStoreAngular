@@ -1,9 +1,7 @@
-﻿using BlazorApp;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
 using ServerApp.Helpers;
 using ServerApp.Models;
 using System.Reflection;
@@ -31,9 +29,15 @@ namespace ServerApp
       services.AddDbContext<DataContext>(options =>
         options.UseSqlServer(connectionString));
 
-      // services.AddRazorComponents()
-      //  .AddInteractiveServerComponents()
-      //  .AddInteractiveWebAssemblyComponents();
+      services.AddDbContext<IdentityDataContext>(options => 
+        options.UseSqlServer(Configuration["ConnectionStrings:Identity"])
+      );
+
+      services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<IdentityDataContext>();
+
+            // services.AddRazorComponents()
+            //  .AddInteractiveServerComponents()
+            //  .AddInteractiveWebAssemblyComponents();
 
       services.AddControllersWithViews(options =>
         {
@@ -128,10 +132,8 @@ namespace ServerApp
       */
 
       app.UseRouting();
-
       app.UseAntiforgery();
-
-      //Must be declared between UseRouting and UseEndpoints.
+      app.UseAuthentication();
       app.UseAuthorization();
 
       app.UseEndpoints(endpoints =>
@@ -162,21 +164,23 @@ namespace ServerApp
         });
 
         app.UseSpa(spa =>
-        {
-          string strategy = Configuration.GetValue<string>("DevTools:ConnectionStrategy") ?? "managed";
-
-          if (strategy == "proxy")
           {
-            spa.UseProxyToSpaDevelopmentServer("http://localhost:4200/");
-          }
-          else if (strategy == "managed")
-          {
-            spa.Options.SourcePath = "../ClientApp";
-            spa.UseAngularCliServer(npmScript: "start");
-          }
-        });
+            string strategy = Configuration.GetValue<string>("DevTools:ConnectionStrategy") ?? "managed";
 
+            if (strategy == "proxy")
+            {
+              spa.UseProxyToSpaDevelopmentServer("http://localhost:4200/");
+            }
+            else if (strategy == "managed")
+            {
+              spa.Options.SourcePath = "../ClientApp";
+              spa.UseAngularCliServer(npmScript: "start");
+            }
+          }
+        );
+        
         SeedData.SeedDatabase(services.GetRequiredService<DataContext>());
+        IdentitySeedData.SeedDatabase(services).Wait();
       }
     }
   }
