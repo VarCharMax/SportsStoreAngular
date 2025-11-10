@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServerApp.Models;
 using System.Diagnostics;
@@ -34,5 +35,11 @@ public class HomeController : Controller
         RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier 
       }
     );
+  }
+
+  [Authorize]
+  public string Protected()
+  {
+    return "You have been authenticated";
   }
 }
