@@ -11,10 +11,9 @@ import { ErrorHandlerService } from './errorHandler.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(),
+    provideHttpClient(withInterceptorsFromDi()),
     importProvidersFrom(BrowserModule),
     provideRouter(routes),
-    provideHttpClient(withInterceptorsFromDi()),
     { provide: LOCALE_ID, useValue: 'en-AU' },
     ErrorHandlerService,
     { provide: HTTP_INTERCEPTORS, useExisting: ErrorHandlerService, multi: true },
