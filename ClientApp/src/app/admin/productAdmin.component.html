@@ -1,0 +1,58 @@
+@if (tableMode == true) {
+<table class="table table-sm table-striped">
+  <tbody>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Category</th>
+      <th>Supplier</th>
+      <th>Price</th>
+      <th></th>
+    </tr>
+    @for(p of products; track p.productId) {
+    <tr>
+      @if (product.productId != p.productId) {
+      <td>{{ p.productId }}</td>
+      <td>{{ p.name }}</td>
+      <td>{{ p.category }}</td>
+      <td>{{ p.supplier?.name || '(None)' }}</td>
+      <td>{{ p.price | currency : 'USD' : 'symbol' }}</td>
+      <td>
+        <button class="btn btn-sm btn-primary" (click)="selectProduct(p.productId!)">
+          Edit
+        </button>
+        <button class="btn btn-sm btn-danger ml-1" (click)="deleteProduct(p.productId!)">
+          Delete
+        </button>
+      </td>
+      } @else {
+      <td colspan="6" class="bg-light border p-3">
+        <admin-product-editor></admin-product-editor>
+        <div class="text-center">
+          <button class="btn btn-sm btn-primary" (click)="saveProduct()">Save</button>
+          <button class="btn btn-sm btn-info ml-1" (click)="clearProduct()">
+            Cancel
+          </button>
+        </div>
+      </td>
+      }
+    </tr>
+    }
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="6" class="text-center">
+        <button class="btn btn-primary" (click)="clearProduct(); tableMode = false">
+          Create
+        </button>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+} @else {
+<div class="m-2">
+  <admin-product-editor></admin-product-editor>
+  <button class="btn btn-primary" (click)="saveProduct()">Save</button>
+  <button class="btn btn-info ml-1" (click)="clearProduct()">Cancel</button>
+</div>
+}

@@ -21,10 +21,7 @@ export class ProductListComponent implements OnInit {
   }
 
   get products(): Product[] {
-    if (
-      // this.repo.getProductsCached() != null &&
-      this.repo.getProductsCached().length > 0
-    ) {
+    if (this.repo.getProductsCached().length > 0) {
       let pageIndex =
         (this.repo.paginationObject.currentPage - 1) *
         this.repo.paginationObject.productsPerPage;

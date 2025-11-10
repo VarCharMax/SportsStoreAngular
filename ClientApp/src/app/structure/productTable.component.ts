@@ -1,15 +1,13 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { Router, RouterLink } from "@angular/router";
+import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Repository } from "../models/repository";
-import { Product } from "../models/product.model";
+import { Product } from '../models/product.model';
+import { Repository } from '../models/repository';
 
 @Component({
-  selector: "product-table",
-  templateUrl: "productTable.component.html",
-  imports: [
-    RouterLink
-  ]
+  selector: 'product-table',
+  templateUrl: 'productTable.component.html',
+  imports: [RouterLink],
 })
 export class ProductTableComponent implements OnInit, OnDestroy {
   private productsChanged: Subscription = new Subscription();
@@ -17,16 +15,15 @@ export class ProductTableComponent implements OnInit, OnDestroy {
 
   products: Product[] = [];
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {}
 
   ngOnInit() {
     this.productsChanged = this.repo.productsChanged.subscribe({
       next: (productList) => {
         this.products = productList;
       },
-      error: () => { }
-    }
-    );
+      error: () => {},
+    });
 
     this.repo.getProductsAsync();
   }

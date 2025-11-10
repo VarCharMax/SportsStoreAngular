@@ -67,8 +67,8 @@ export class Repository {
     return this.products.slice();
   }
 
-  getProductCached(id: number): Product | undefined {
-    return this.products.find((p) => p.productId == id);
+  getProductCached(): Product | undefined {
+    return this.product;
   }
 
   getSuppliersCached(): Supplier[] {

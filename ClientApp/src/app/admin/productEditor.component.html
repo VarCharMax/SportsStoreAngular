@@ -1,0 +1,27 @@
+<div class="form-group">
+  <label>Name</label>
+  <input class="form-control" [(ngModel)]="product.name" />
+</div>
+<div class="form-group">
+  <label>Category</label>
+  <input class="form-control" [(ngModel)]="product.category" />
+</div>
+<div class="form-group">
+  <label>Supplier</label>
+  <select
+    class="form-control"
+    [(ngModel)]="product.supplier"
+    [compareWith]="compareSuppliers">
+    @for (s of suppliers; track s.supplierId) {
+    <option [ngValue]="s">{{ s.name }}</option>
+    }
+  </select>
+</div>
+<div class="form-group">
+  <label>Description</label>
+  <textarea class="form-control" [(ngModel)]="product.description"></textarea>
+</div>
+<div class="form-group">
+  <label>Price</label>
+  <input type="number" class="form-control" [(ngModel)]="product.price" />
+</div>
