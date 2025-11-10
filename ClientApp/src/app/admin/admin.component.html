@@ -6,27 +6,29 @@
   <a class="btn btn-block btn-secondary" routerLink="/store"> Store </a>
 </div>
 
-<div class="row no-gutters">
-  <div class="col-3">
-    <button
-      class="btn btn-block btn-outline-info m-1"
-      routerLink="/admin"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: true }">
-      Overview
-    </button>
-    <button
-      class="btn btn-block btn-outline-info m-1"
-      routerLink="/admin/products"
-      routerLinkActive="active">
-      Products
-    </button>
-    <button
-      class="btn btn-block btn-outline-info m-1"
-      routerLink="/admin/orders"
-      routerLinkActive="active">
-      Orders
-    </button>
+<div class="row g-0">
+  <div class="col-1">
+    <div class="d-grid gap-1">
+      <button
+        class="btn btn-outline-info m-1"
+        routerLink="/admin"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        Overview
+      </button>
+      <button
+        class="btn btn-outline-info m-1"
+        routerLink="/admin/products"
+        routerLinkActive="active">
+        Products
+      </button>
+      <button
+        class="btn btn-outline-info m-1"
+        routerLink="/admin/orders"
+        routerLinkActive="active">
+        Orders
+      </button>
+    </div>
   </div>
   <div class="col p-2">
     <router-outlet></router-outlet>
