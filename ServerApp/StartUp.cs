@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+﻿using BlazorApp;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using ServerApp.Helpers;
 using ServerApp.Models;
 using System.Reflection;
 
-namespace SportsStore.Server
+namespace ServerApp
 {
   public class Startup(IWebHostEnvironment env)
   {
@@ -27,6 +30,10 @@ namespace SportsStore.Server
 
       services.AddDbContext<DataContext>(options =>
         options.UseSqlServer(connectionString));
+
+      // services.AddRazorComponents()
+      //  .AddInteractiveServerComponents()
+      //  .AddInteractiveWebAssemblyComponents();
 
       services.AddControllersWithViews(options =>
         {
@@ -66,6 +73,14 @@ namespace SportsStore.Server
           options.Cookie.IsEssential = true;
         }
       );
+
+      /*
+      services.AddResponseCompression(opts => 
+        {
+          opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
+        }
+      );
+      */
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider services)
@@ -73,6 +88,7 @@ namespace SportsStore.Server
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
+        app.UseWebAssemblyDebugging();
       }
       else
       {
@@ -81,9 +97,39 @@ namespace SportsStore.Server
       }
 
       app.UseHttpsRedirection();
+
+      app.UseBlazorFrameworkFiles("/blazor");
+
       app.UseStaticFiles();
+
+      /*
+      app.UseStaticFiles(new StaticFileOptions
+      {
+        RequestPath = "/blazor",
+        FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(),
+        "../BlazorApp/wwwroot"))
+      });
+      */
+
       app.UseSession();
+
+      /*
+      app.Map("/blazor", child =>
+      {
+        child.UseRouting();
+        // child.UseAuthorization();
+        child.UseAntiforgery();
+        child.UseEndpoints(endpoints =>
+        {
+          // endpoints.MapRazorComponents<App>();
+          endpoints.MapFallbackToFile("blazor/index.html");
+        });
+      });
+      */
+
       app.UseRouting();
+
+      app.UseAntiforgery();
 
       //Must be declared between UseRouting and UseEndpoints.
       app.UseAuthorization();
@@ -93,20 +139,21 @@ namespace SportsStore.Server
         endpoints.MapControllerRoute(
                  name: "default",
                  pattern: "{controller=Home}/{action=Index}/{id?}");
-        endpoints.MapRazorPages();
 
         endpoints.MapControllerRoute(
             name: "angular_fallback",
-            pattern: "{target:regex(store|cart|checkout)}/{*catchall}",
+            pattern: "{target:regex(admin|store|cart|checkout):nonfile}/{*catchall}",
             defaults: new { controller = "Home", action = "Index" }
           );
-        
+
+        endpoints.MapRazorPages();
+
         if (env.IsDevelopment())
         {
           endpoints.MapOpenApi( );
         }
       });
-      
+
       if (env.IsDevelopment())
       {
         app.UseSwaggerUI(options =>

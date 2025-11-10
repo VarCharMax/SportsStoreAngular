@@ -11,7 +11,7 @@ namespace ServerApp.Models
     [Required]
     public string Name { get; set; } = String.Empty;
 
-    public IEnumerable<CartLine> Products { get; set; } = [];
+    public IList<CartLine> Products { get; set; } = [];
 
     [Required]
     public string Address { get; set; } = String.Empty;

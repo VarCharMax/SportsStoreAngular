@@ -1,3 +1,5 @@
+using ServerApp;
+
 namespace SportsStore.Server
 {
   public class Program

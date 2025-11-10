@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ServerApp.Models;
@@ -8,6 +9,7 @@ namespace ServerApp.Controllers
 {
   [Route("api/products")]
   [ApiController]
+  [Authorize(Roles = "Administrator")]
   public class ProductValuesController : ControllerBase
   {
     private DataContext context;
@@ -18,6 +20,7 @@ namespace ServerApp.Controllers
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<ActionResult<Product>> GetProduct(long id)
     {
       var result = await context.Products
@@ -44,6 +47,7 @@ namespace ServerApp.Controllers
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public ActionResult<IEnumerable<Product>> GetProducts(string category = "", string search = "", bool related = false, bool metadata = false)
     {
       IQueryable<Product> query = context.Products;
@@ -61,7 +65,7 @@ namespace ServerApp.Controllers
           p.Description.ToLower().Contains(searchLower));
       }
       
-      if (related)
+      if (related && HttpContext.User.IsInRole("Administrator"))
       {
         query = query.Include(p => p.Supplier).Include(p => p.Ratings);
         List<Product> data = [.. query];
