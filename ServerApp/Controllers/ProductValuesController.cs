@@ -83,7 +83,7 @@ namespace ServerApp.Controllers
     }
 
     [HttpPost]
-    public IActionResult CreateProduct([FromBody] ProductData pdata)
+    public ActionResult<long> CreateProduct([FromBody] ProductData pdata)
     { 
       if (ModelState.IsValid)
       {
@@ -108,7 +108,7 @@ namespace ServerApp.Controllers
     }
 
     [HttpPut("{id}")]
-    public IActionResult ReplaceProduct(long id, [FromBody] ProductData pdata)
+    public ActionResult<bool> ReplaceProduct(long id, [FromBody] ProductData pdata)
     {
       if (ModelState.IsValid)
       {
@@ -122,7 +122,7 @@ namespace ServerApp.Controllers
         context.Update(p);
         context.SaveChanges();
         
-        return Ok();
+        return Ok(true);
       }
       else
       { 
@@ -131,7 +131,7 @@ namespace ServerApp.Controllers
     }
 
     [HttpPatch("{id}")]
-    public IActionResult UpdateProduct(long id, [FromBody] JsonPatchDocument<ProductData> patch)
+    public ActionResult<bool> UpdateProduct(long id, [FromBody] JsonPatchDocument<ProductData> patch)
     {
       Product product = context.Products.Include(p => p.Supplier).First(p => p.ProductId == id);
       ProductData pdata = new() { Product = product };
@@ -147,7 +147,7 @@ namespace ServerApp.Controllers
         
         context.SaveChanges();
         
-        return Ok();
+        return Ok(true);
       }
       else
       { 
@@ -163,7 +163,7 @@ namespace ServerApp.Controllers
         context.Products.Remove(new Product { ProductId = id });
         context.SaveChanges();
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         result = false;
       }
