@@ -13,6 +13,7 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   private repo: Repository = inject(Repository);
   private productRetrieved: Subscription = new Subscription();
   private productsChanged: Subscription = new Subscription();
+  private productChanged: Subscription = new Subscription();
 
   product: Product = new Product();
   products: Product[] = [];
@@ -21,6 +22,17 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit() {
+    this.productChanged = this.repo.productChanged.subscribe({
+      next: (prod) => {
+        let index = this.products.findIndex((t) => t.productId === prod.productId);
+        this.products[index] = prod;
+        this.product = prod;
+        this.clearProduct();
+        this.tableMode = true;
+      },
+      error: () => {},
+    });
+
     this.productRetrieved = this.repo.productRetrieved.subscribe({
       next: (prod) => {
         this.product = prod;
@@ -31,6 +43,8 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
     this.productsChanged = this.repo.productsChanged.subscribe({
       next: (productList) => {
         this.products = productList;
+        this.clearProduct();
+        this.tableMode = true;
       },
       error: () => {},
     });
@@ -39,8 +53,6 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   }
 
   selectProduct(id: number) {
-    console.log(`Selected Product: ${id}`);
-    console.log(`Current Product: ${this.product.productId}`);
     this.repo.getProductAsync(id);
   }
 
@@ -50,8 +62,6 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
     } else {
       this.repo.replaceProductAsync(this.product);
     }
-    this.clearProduct();
-    this.tableMode = true;
   }
 
   deleteProduct(id: number) {
@@ -65,6 +75,7 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.productChanged.unsubscribe();
     this.productsChanged.unsubscribe();
     this.productRetrieved.unsubscribe();
   }
