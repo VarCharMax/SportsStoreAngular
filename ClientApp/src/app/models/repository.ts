@@ -83,6 +83,10 @@ export class Repository {
     return this.orders;
   }
 
+  clearProductCache() {
+    this.product = new Product();
+  }
+
   /*
    * Get collections async.
    */
@@ -322,6 +326,10 @@ export class Repository {
         if (result === true) {
           this.products = this.products.filter((i) => i.productId != id).slice();
           this.productsChanged.next(this.products.slice());
+        } else {
+          this.errorsChanged.next({
+            Error: ['Delete operation encountered an error'],
+          });
         }
       },
       error: (e) => {

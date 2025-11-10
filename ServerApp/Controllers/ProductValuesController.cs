@@ -156,9 +156,19 @@ namespace ServerApp.Controllers
     }
 
     [HttpDelete("{id}")]
-    public void DeleteProduct(long id){
-      context.Products.Remove(new Product { ProductId = id });
-      context.SaveChanges();
+    public ActionResult<bool> DeleteProduct(long id){
+      bool result = true;
+      try
+      {
+        context.Products.Remove(new Product { ProductId = id });
+        context.SaveChanges();
+      }
+      catch (Exception ex)
+      {
+        result = false;
+      }
+
+      return Ok(result);
     }
 
     private OkObjectResult CreateMetadata(IEnumerable<Product> products)
