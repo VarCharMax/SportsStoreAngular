@@ -1,1 +1,9 @@
+@if (error.length > 0) {
+<div class="bg-danger text-white text-center p-2 m-2">
+  @for(e of error; track $index) {
+  <h6>{{ e }}</h6>
+  }
+  <button class="btn btn-warning" (click)="clearError()">OK</button>
+</div>
+}
 <router-outlet />

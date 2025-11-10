@@ -23,7 +23,9 @@ export class ErrorHandlerService implements HttpInterceptor {
         } else {
           this.errSubject.next(['An HTTP error occurred']);
         }
-        return throwError(() => new Error(resp.error));
+        return throwError(() => {
+          resp;
+        });
       }),
     );
   }
