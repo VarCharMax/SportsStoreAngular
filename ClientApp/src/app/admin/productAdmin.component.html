@@ -11,7 +11,7 @@
     </tr>
     @for(p of products; track p.productId) {
     <tr>
-      @if (product.productId != p.productId) {
+      @if (p.productId !== product.productId) {
       <td>{{ p.productId }}</td>
       <td>{{ p.name }}</td>
       <td>{{ p.category }}</td>

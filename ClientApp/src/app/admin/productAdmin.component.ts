@@ -11,7 +11,7 @@ import { ProductEditorComponent } from './productEditor.component';
 })
 export class ProductAdminComponent implements OnInit, OnDestroy {
   private repo: Repository = inject(Repository);
-  private productChanged: Subscription = new Subscription();
+  private productRetrieved: Subscription = new Subscription();
   private productsChanged: Subscription = new Subscription();
 
   product: Product = new Product();
@@ -21,7 +21,7 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit() {
-    this.productChanged = this.repo.productChanged.subscribe({
+    this.productRetrieved = this.repo.productRetrieved.subscribe({
       next: (prod) => {
         this.product = prod;
       },
@@ -39,7 +39,8 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   }
 
   selectProduct(id: number) {
-    console.log(`selected Product: ${id}`);
+    console.log(`Selected Product: ${id}`);
+    console.log(`Current Product: ${this.product.productId}`);
     this.repo.getProductAsync(id);
   }
 
@@ -65,6 +66,6 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.productsChanged.unsubscribe();
-    this.productChanged.unsubscribe();
+    this.productRetrieved.unsubscribe();
   }
 }
