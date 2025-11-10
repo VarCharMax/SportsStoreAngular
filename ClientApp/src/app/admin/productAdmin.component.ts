@@ -11,11 +11,9 @@ import { ProductEditorComponent } from './productEditor.component';
 })
 export class ProductAdminComponent implements OnInit, OnDestroy {
   private repo: Repository = inject(Repository);
-  private productsChanged: Subscription = new Subscription();
   private productChanged: Subscription = new Subscription();
 
   product: Product = new Product();
-  products: Product[] = [];
   tableMode: boolean = true;
 
   constructor() {}
@@ -27,15 +25,6 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
       },
       error: () => {},
     });
-
-    this.productsChanged = this.repo.productsChanged.subscribe({
-      next: (productList) => {
-        this.products = productList;
-      },
-      error: () => {},
-    });
-
-    this.repo.getProductsAsync();
   }
 
   selectProduct(id: number) {
@@ -61,8 +50,11 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
     this.tableMode = true;
   }
 
-  ngOnDestroy() {
+  get products(): Product[] {
+    return this.repo.getProductsCached();
+  }
+
+  ngOnDestroy(): void {
     this.productChanged.unsubscribe();
-    this.productsChanged.unsubscribe();
   }
 }

@@ -1,0 +1,30 @@
+@if (orders.length > 0) {
+<table class="table table-striped">
+  <tbody>
+    <tr>
+      <th>Customer</th>
+      <th>Address</th>
+      <th>Products</th>
+      <th>Total</th>
+      <th></th>
+    </tr>
+    @for(o of orders; track o.orderId) {
+    <tr>
+      <td>{{ o.name }}</td>
+      <td>{{ o.address }}</td>
+      <td>{{ o.products.length }}</td>
+      <td>{{ o.payment.total | currency : 'AUD' : 'symbol' }}</td>
+      @if (!o.shipped) {
+      <td>
+        <button class="btn btn-sm btn-primary" (click)="markShipped(o)">Ship</button>
+      </td>
+      } @else{
+      <td>Shipped</td>
+      }
+    </tr>
+    }
+  </tbody>
+</table>
+} @else {
+<h3 class="text-center">There are no orders</h3>
+}

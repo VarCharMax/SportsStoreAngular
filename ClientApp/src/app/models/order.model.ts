@@ -19,7 +19,6 @@ export class Order {
   private repo: Repository = inject(Repository);
 
   cart: Cart = inject(Cart);
-
   orderId: number | undefined;
   name: string | undefined;
   address: string | undefined;
@@ -80,6 +79,7 @@ export class Payment {
   cardNumber?: string;
   cardExpiry?: string;
   cardSecurityCode?: string;
+  total: number = 0;
 }
 
 export class CartLine {

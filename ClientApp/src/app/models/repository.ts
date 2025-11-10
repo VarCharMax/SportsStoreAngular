@@ -78,6 +78,7 @@ export class Repository {
   getSupplierCached(id: number): Supplier | undefined {
     return this.suppliers.find((s) => s.supplierId == id);
   }
+
   getOrdersCached(): Order[] {
     return this.orders;
   }
