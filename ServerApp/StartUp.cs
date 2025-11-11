@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using ServerApp.Helpers;
 using ServerApp.Models;
 using System.Reflection;
@@ -12,10 +14,11 @@ namespace ServerApp
   {
     private readonly IConfigurationRoot Configuration = new ConfigurationBuilder()
             .SetBasePath(env.ContentRootPath)
-            .AddJsonFile("appSettings.json", optional: false, true)
-            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, true)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
             .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
             .AddEnvironmentVariables()
+            .AddCommandLine([.. Environment.GetCommandLineArgs().Skip(1)])
             .Build();
 
     public void ConfigureServices(IServiceCollection services)
@@ -28,16 +31,11 @@ namespace ServerApp
 
       services.AddDbContext<DataContext>(options =>
         options.UseSqlServer(connectionString));
+      services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<IdentityDataContext>();
 
       services.AddDbContext<IdentityDataContext>(options => 
         options.UseSqlServer(Configuration["ConnectionStrings:Identity"])
       );
-
-      services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<IdentityDataContext>();
-
-            // services.AddRazorComponents()
-            //  .AddInteractiveServerComponents()
-            //  .AddInteractiveWebAssemblyComponents();
 
       services.AddControllersWithViews(options =>
         {
@@ -58,25 +56,33 @@ namespace ServerApp
       //This adds support for WebApi and Controllers with Views.
       services.AddRazorPages();
 
-      if (env.IsDevelopment())
-      {
-        services.AddOpenApi();
-      }
-
-      services.AddDistributedSqlServerCache(options => {
+      services.AddDistributedSqlServerCache(options =>
+        {
           options.ConnectionString = connectionString;
           options.SchemaName = "dbo";
-          options.TableName = "SessionData"; 
+          options.TableName = "SessionData";
         }
       );
-      
-      services.AddSession(options => {
+
+      services.AddSession(options =>
+        {
           options.Cookie.Name = "SportsStore.Session";
           options.IdleTimeout = TimeSpan.FromHours(48);
           options.Cookie.HttpOnly = false;
           options.Cookie.IsEssential = true;
         }
       );
+
+      services.AddAntiforgery(options =>
+        {
+          options.HeaderName = "X-XSRF-TOKEN";
+        }
+      );
+
+      if (env.IsDevelopment())
+      {
+        services.AddOpenApi();
+      }
 
       /*
       services.AddResponseCompression(opts => 
@@ -87,12 +93,13 @@ namespace ServerApp
       */
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider services)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider services, IAntiforgery antiforgery,
+            IHostApplicationLifetime lifetime)
     {
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
-        app.UseWebAssemblyDebugging();
+        // app.UseWebAssemblyDebugging();
       }
       else
       {
@@ -101,40 +108,50 @@ namespace ServerApp
       }
 
       app.UseHttpsRedirection();
-
-      app.UseBlazorFrameworkFiles("/blazor");
-
+      // app.UseBlazorFrameworkFiles("/blazor");
       app.UseStaticFiles();
 
-      /*
       app.UseStaticFiles(new StaticFileOptions
       {
-        RequestPath = "/blazor",
-        FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(),
-        "../BlazorApp/wwwroot"))
+        RequestPath = "",
+        FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(),
+                        "./wwwroot/app"))
       });
-      */
 
       app.UseSession();
-
-      /*
-      app.Map("/blazor", child =>
-      {
-        child.UseRouting();
-        // child.UseAuthorization();
-        child.UseAntiforgery();
-        child.UseEndpoints(endpoints =>
-        {
-          // endpoints.MapRazorComponents<App>();
-          endpoints.MapFallbackToFile("blazor/index.html");
-        });
-      });
-      */
-
       app.UseRouting();
-      app.UseAntiforgery();
+      // app.UseAntiforgery();
       app.UseAuthentication();
       app.UseAuthorization();
+
+      /*
+      app.Use(nextDelegate => context => {
+        string? path = context.Request.Path.Value;
+
+        if (path != null)
+        {
+          string[] directUrls = ["/admin", "/store", "/cart", "checkout"];
+          if (path.StartsWith("/api") || string.Equals("/", path) || directUrls.Any(url => path.StartsWith(url)))
+          {
+            var tokens = antiforgery.GetAndStoreTokens(context);
+
+            if (tokens.RequestToken != null)
+            {
+              context.Response.Cookies.Append("XSRF-TOKEN",
+                tokens.RequestToken, new CookieOptions()
+                {
+                  HttpOnly = false,
+                  Secure = false,
+                  IsEssential = true
+                });
+            }
+          }
+        }
+        
+        return nextDelegate(context);
+      });
+      */
 
       app.UseEndpoints(endpoints =>
       {
@@ -181,6 +198,17 @@ namespace ServerApp
         
         SeedData.SeedDatabase(services.GetRequiredService<DataContext>());
         IdentitySeedData.SeedDatabase(services).Wait();
+
+        /*
+        if ((Configuration["INITDB"] ?? "false") == "true")
+        {
+          Console.WriteLine("Preparing Database...");
+          SeedData.SeedDatabase(services.GetRequiredService<DataContext>());
+          IdentitySeedData.SeedDatabase(services).Wait();
+          Console.WriteLine("Database Preparation Complete");
+          lifetime.StopApplication();
+        }
+        */
       }
     }
   }
