@@ -8,6 +8,7 @@ namespace ServerApp.Controllers
   [Route("/api/orders")]
   [ApiController]
   [Authorize(Roles = "Administrator")]
+  [AutoValidateAntiforgeryToken]
   public class OrderValuesController : Controller
   {
     private DataContext context;

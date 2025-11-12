@@ -110,7 +110,7 @@ namespace ServerApp
       app.UseHttpsRedirection();
       // app.UseBlazorFrameworkFiles("/blazor");
       app.UseStaticFiles();
-
+      
       app.UseStaticFiles(new StaticFileOptions
       {
         RequestPath = "",
@@ -121,11 +121,10 @@ namespace ServerApp
 
       app.UseSession();
       app.UseRouting();
-      // app.UseAntiforgery();
+      app.UseAntiforgery();
       app.UseAuthentication();
       app.UseAuthorization();
 
-      /*
       app.Use(nextDelegate => context => {
         string? path = context.Request.Path.Value;
 
@@ -151,7 +150,6 @@ namespace ServerApp
         
         return nextDelegate(context);
       });
-      */
 
       app.UseEndpoints(endpoints =>
       {

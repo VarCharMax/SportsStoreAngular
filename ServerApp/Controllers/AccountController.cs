@@ -28,7 +28,6 @@ namespace ServerApp.Controllers
       {
         if (await DoLogin(creds))
         {
-
           return Redirect(returnUrl ?? "/");
         }
         else
@@ -69,7 +68,7 @@ namespace ServerApp.Controllers
       {
         return Ok("true");
       }
-      return BadRequest();
+      return BadRequest(ModelState);
     }
 
     [HttpPost("/api/account/logout")]
@@ -83,7 +82,7 @@ namespace ServerApp.Controllers
   public class LoginViewModel
   {
     [Required]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = String.Empty;
     [Required]
     public string Password { get; set; } = String.Empty;
   }

@@ -6,6 +6,7 @@ using ServerApp.Models.BindingTargets;
 namespace ServerApp.Controllers
 {
   [Route("/api/session")]
+  [AutoValidateAntiforgeryToken]
   [ApiController]
   public class SessionValuesController : Controller
   {

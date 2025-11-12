@@ -5,9 +5,9 @@ using ServerApp.Models.BindingTargets;
 
 namespace ServerApp.Controllers
 {
-
   [Route("api/suppliers")]
   [Authorize(Roles = "Administrator")]
+  [AutoValidateAntiforgeryToken]
   public class SupplierValuesController : Controller
   {
     private DataContext context;
@@ -18,6 +18,7 @@ namespace ServerApp.Controllers
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public IEnumerable<Supplier> GetSuppliers()
     {
       return context.Suppliers;
