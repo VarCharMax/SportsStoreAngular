@@ -91,7 +91,6 @@ namespace ServerApp
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
-        // app.UseWebAssemblyDebugging();
       }
       else
       {
@@ -185,10 +184,9 @@ namespace ServerApp
           }
         );
         
-        SeedData.SeedDatabase(services.GetRequiredService<DataContext>());
-        IdentitySeedData.SeedDatabase(services).Wait();
+        // SeedData.SeedDatabase(services.GetRequiredService<DataContext>());
+        // IdentitySeedData.SeedDatabase(services).Wait();
 
-        /*
         if ((Configuration["INITDB"] ?? "false") == "true")
         {
           Console.WriteLine("Preparing Database...");
@@ -197,7 +195,6 @@ namespace ServerApp
           Console.WriteLine("Database Preparation Complete");
           lifetime.StopApplication();
         }
-        */
       }
     }
   }
