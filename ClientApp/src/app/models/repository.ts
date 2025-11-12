@@ -51,6 +51,17 @@ export class Repository {
     this.getSuppliersAsync();
   }
 
+  login(name: string, password: string): Observable<boolean> {
+    return this.http.post<boolean>('/api/account/login', {
+      name: name,
+      password: password,
+    });
+  }
+
+  logout() {
+    this.http.post('/api/account/logout', null).subscribe((response) => {});
+  }
+
   storeSessionData<T>(dataType: string, data: T) {
     return this.http.post(`${sessionUrl}/${dataType}`, data).subscribe((response) => {}); // Forces HttpClient to send request.
   }
@@ -277,7 +288,7 @@ export class Repository {
 
             this.productChanged.next(updateProduct);
           } else {
-            this.errorsChanged.next({ Error: ['Update operation encountered an error'] });
+            this.errorsChanged.next({ error: ['Update operation encountered an error'] });
           }
         }
       },
@@ -313,7 +324,7 @@ export class Repository {
             this.productChanged.next(product);
           } else {
             this.errorsChanged.next({
-              Error: ['Update operation encountered an error'],
+              error: ['Update operation encountered an error'],
             });
           }
         }
@@ -332,7 +343,7 @@ export class Repository {
           this.productsChanged.next(this.products.slice());
         } else {
           this.errorsChanged.next({
-            Error: ['Delete operation encountered an error'],
+            error: ['Delete operation encountered an error'],
           });
         }
       },

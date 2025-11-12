@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterModule } from '@angular/router';
+import { AuthenticationService } from '../auth/authentication.service';
 import { Repository } from '../models/repository';
 
 @Component({
@@ -7,6 +8,7 @@ import { Repository } from '../models/repository';
   imports: [RouterLink, RouterModule],
 })
 export class AdminComponent {
+  authService: AuthenticationService = inject(AuthenticationService);
   private repo: Repository = inject(Repository);
 
   constructor() {
