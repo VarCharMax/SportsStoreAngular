@@ -83,14 +83,6 @@ namespace ServerApp
       {
         services.AddOpenApi();
       }
-
-      /*
-      services.AddResponseCompression(opts => 
-        {
-          opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
-        }
-      );
-      */
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider services, IAntiforgery antiforgery,
@@ -108,7 +100,6 @@ namespace ServerApp
       }
 
       app.UseHttpsRedirection();
-      // app.UseBlazorFrameworkFiles("/blazor");
       app.UseStaticFiles();
       
       app.UseStaticFiles(new StaticFileOptions
