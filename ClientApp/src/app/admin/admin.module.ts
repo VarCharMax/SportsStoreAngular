@@ -23,6 +23,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
+  providers: [AuthenticationGuard],
   imports: [RouterModule.forChild(routes)],
 })
 export class AdminModule {}
