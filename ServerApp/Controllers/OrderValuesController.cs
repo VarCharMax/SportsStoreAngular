@@ -55,39 +55,35 @@ namespace ServerApp.Controllers
     [AllowAnonymous]
     public ActionResult CreateOrder([FromBody] Order order)
     {
-      if (ModelState.IsValid)
+      order.OrderId = 0; order.Shipped = false;
+      order.Payment.Total = GetPrice(order.Products);
+
+      try
       {
-        order.OrderId = 0; order.Shipped = false;
-        order.Payment.Total = GetPrice(order.Products);
+        ProcessPayment(order.Payment);
 
-        try
+        if (order.Payment.AuthCode != null)
         {
-          ProcessPayment(order.Payment);
+          context.Add(order);
+          context.SaveChanges();
 
-          if (order.Payment.AuthCode != null)
+          return Ok(new 
           {
-            context.Add(order);
-            context.SaveChanges();
-
-            return Ok(new 
-            {
-              orderId = order.OrderId,
-              authCode = order.Payment.AuthCode,
-              amount = order.Payment.Total
-            }
-            );
+            orderId = order.OrderId,
+            authCode = order.Payment.AuthCode,
+            amount = order.Payment.Total
           }
-          else
-          {
-            return BadRequest("Payment rejected");
-          }
+          );
         }
-        catch (Exception)
+        else
         {
           return BadRequest("Payment rejected");
         }
       }
-      return BadRequest(ModelState);
+      catch (Exception)
+      {
+        return BadRequest("Payment rejected");
+      }
     }
 
     private decimal GetPrice(IEnumerable<CartLine> lines)

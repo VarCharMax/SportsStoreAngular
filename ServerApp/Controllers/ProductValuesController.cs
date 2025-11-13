@@ -34,11 +34,11 @@ namespace ServerApp.Controllers
       {
         if (result.Supplier != null && result.Supplier.Products != null)
         {
-          result.Supplier.Products = 
-            [.. result.Supplier.Products.Select(p => 
+          result.Supplier.Products =
+            [.. result.Supplier.Products.Select(p =>
               new Product { ProductId = p.ProductId, Name = p.Name, Category = p.Category, Description = p.Description, Price = p.Price })];
         }
-        
+
         return new JsonResult(result);
       }
       else
@@ -58,14 +58,14 @@ namespace ServerApp.Controllers
         string catLower = category.ToLower();
         query = query.Where(p => p.Category.ToLower().Contains(catLower));
       }
-      
-      if (!string.IsNullOrWhiteSpace(search)) 
+
+      if (!string.IsNullOrWhiteSpace(search))
       {
         string searchLower = search.ToLower();
-        query = query.Where(p => p.Name.ToLower().Contains(searchLower) || 
+        query = query.Where(p => p.Name.ToLower().Contains(searchLower) ||
           p.Description.ToLower().Contains(searchLower));
       }
-      
+
       if (related && HttpContext.User.IsInRole("Administrator"))
       {
         query = query.Include(p => p.Supplier).Include(p => p.Ratings);
@@ -90,33 +90,24 @@ namespace ServerApp.Controllers
     [HttpPost]
     public ActionResult<long> CreateProduct([FromBody] ProductData pdata)
     { 
-      if (ModelState.IsValid)
+      Product p = pdata.Product;
+      if (pdata.SupplierId.HasValue && pdata.SupplierId.Value != 0)
       {
-        Product p = pdata.Product;
-        if (pdata.SupplierId.HasValue && pdata.SupplierId.Value != 0)
-        {
-          Supplier s = new() { SupplierId = pdata.SupplierId.Value };
-          p.Supplier = s;
+        Supplier s = new() { SupplierId = pdata.SupplierId.Value };
+        p.Supplier = s;
 
-          context.Attach(p.Supplier);
-        } 
-        
-        context.Add(p);
-        context.SaveChanges();
-
-        return Ok(p.ProductId);
+        context.Attach(p.Supplier);
       } 
-      else
-      {
-        return BadRequest(ModelState);
-      }
+        
+      context.Add(p);
+      context.SaveChanges();
+
+      return Ok(p.ProductId);
     }
 
     [HttpPut("{id}")]
     public ActionResult<bool> ReplaceProduct(long id, [FromBody] ProductData pdata)
     {
-      if (ModelState.IsValid)
-      {
         Product p = pdata.Product;
         p.ProductId = id;
         if (p.Supplier != null && p.Supplier.SupplierId != 0)
@@ -128,11 +119,6 @@ namespace ServerApp.Controllers
         context.SaveChanges();
         
         return Ok(true);
-      }
-      else
-      { 
-        return BadRequest(ModelState);
-      }
     }
 
     [HttpPatch("{id}")]
