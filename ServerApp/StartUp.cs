@@ -168,8 +168,7 @@ namespace ServerApp
         }
         */
       });
-
-      /*
+      
       if (env.IsDevelopment())
       {
         app.UseSwaggerUI(options =>
@@ -192,19 +191,18 @@ namespace ServerApp
             }
           }
         );
-        */
 
-        // SeedData.SeedDatabase(services.GetRequiredService<DataContext>());
-        // IdentitySeedData.SeedDatabase(services).Wait();
+         // SeedData.SeedDatabase(services.GetRequiredService<DataContext>());
+         // IdentitySeedData.SeedDatabase(services).Wait();
+      }
 
-        if ((Configuration["INITDB"] ?? "false") == "true")
-        {
-          Console.WriteLine("Preparing Database...");
-          SeedData.SeedDatabase(services.GetRequiredService<DataContext>());
-          IdentitySeedData.SeedDatabase(services).Wait();
-          Console.WriteLine("Database Preparation Complete");
-          lifetime.StopApplication();
-        }
+      if ((Configuration["INITDB"] ?? "false") == "true")
+      {
+        Console.WriteLine("Preparing Database...");
+        SeedData.SeedDatabase(services.GetRequiredService<DataContext>());
+        IdentitySeedData.SeedDatabase(services).Wait();
+        Console.WriteLine("Database Preparation Complete");
+        lifetime.StopApplication();
       }
     }
   }
