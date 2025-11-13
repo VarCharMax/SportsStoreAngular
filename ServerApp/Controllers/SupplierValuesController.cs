@@ -8,6 +8,7 @@ namespace ServerApp.Controllers
   [Route("api/suppliers")]
   [Authorize(Roles = "Administrator")]
   [AutoValidateAntiforgeryToken]
+  [ApiController]
   public class SupplierValuesController : Controller
   {
     private DataContext context;
