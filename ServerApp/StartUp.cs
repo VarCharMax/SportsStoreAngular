@@ -79,15 +79,18 @@ namespace ServerApp
         }
       );
 
+      /*
       if (env.IsDevelopment())
       {
         services.AddOpenApi();
       }
+      */
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider services, IAntiforgery antiforgery,
             IHostApplicationLifetime lifetime)
     {
+      /*
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
@@ -97,7 +100,10 @@ namespace ServerApp
         app.UseExceptionHandler("/Home/Error");
         app.UseHsts();
       }
+      */
 
+      app.UseExceptionHandler("/Home/Error");
+      app.UseHsts();
       app.UseHttpsRedirection();
       app.UseStaticFiles();
       
@@ -155,12 +161,15 @@ namespace ServerApp
 
         endpoints.MapRazorPages();
 
+        /*
         if (env.IsDevelopment())
         {
           endpoints.MapOpenApi( );
         }
+        */
       });
 
+      /*
       if (env.IsDevelopment())
       {
         app.UseSwaggerUI(options =>
@@ -183,7 +192,8 @@ namespace ServerApp
             }
           }
         );
-        
+        */
+
         // SeedData.SeedDatabase(services.GetRequiredService<DataContext>());
         // IdentitySeedData.SeedDatabase(services).Wait();
 

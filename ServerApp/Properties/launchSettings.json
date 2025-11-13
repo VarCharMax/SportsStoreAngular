@@ -4,14 +4,14 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        // "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "SportsStore": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        // "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "https://localhost:2001;http://localhost:2000"
     }
