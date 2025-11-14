@@ -20,17 +20,6 @@ import { Supplier } from '../models/supplier.model';
 export class ProductEditorComponent implements OnInit {
   private repo: Repository = inject(Repository);
   private product: Product | undefined = undefined;
-  private localProduct: {
-    name?: string | null | undefined;
-    description?: string | null;
-    category?: string | null;
-    supplier?: number | null;
-  } = {
-    name: null,
-    category: null,
-    description: null,
-    supplier: null,
-  };
 
   @Output() newProductEvent = new EventEmitter<Product>();
 
@@ -52,7 +41,10 @@ export class ProductEditorComponent implements OnInit {
         name: this.product.name ?? null,
         category: this.product.category ?? null,
         description: this.product.description ?? null,
-        price: this.product.price == null ? '' : this.product.price.toString(),
+        price:
+          this.product.price == null
+            ? ''
+            : this.product.price.toString().replace('$', ''),
         supplier: this.product.supplier?.supplierId!.toString() ?? null,
       });
     } else {
@@ -65,6 +57,8 @@ export class ProductEditorComponent implements OnInit {
       this.product!.description = prod.description ?? undefined;
       this.product!.supplier!.supplierId =
         prod.supplier == null ? 0 : parseInt(prod.supplier);
+      this.product!.price =
+        prod.price == null ? 0 : parseInt(prod.price.replace('$', ''));
     });
 
     this.productForm.statusChanges.subscribe((status: FormControlStatus) => {

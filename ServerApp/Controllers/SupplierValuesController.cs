@@ -32,7 +32,7 @@ namespace ServerApp.Controllers
       context.Add(s);
       context.SaveChanges();
       return Ok(s.SupplierId);
-    }
+    } 
 
     [HttpPut("{id}")]
     public IActionResult ReplaceSupplier(long id, [FromBody] SupplierData sdata)

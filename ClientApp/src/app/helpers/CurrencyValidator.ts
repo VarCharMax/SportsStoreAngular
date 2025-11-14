@@ -2,7 +2,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 export function currencyValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value;
+    const value: string = control.value;
     if (!value) {
       return null; // Don't validate if empty, let Validators.required handle it
     }
