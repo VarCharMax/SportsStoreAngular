@@ -11,9 +11,10 @@ import { ProductEditorComponent } from './productEditor.component';
 })
 export class ProductAdminComponent implements OnInit, OnDestroy {
   private repo: Repository = inject(Repository);
-  private productRetrieved: Subscription = new Subscription();
+  // private productRetrieved: Subscription = new Subscription();
   private productsChanged: Subscription = new Subscription();
   private productChanged: Subscription = new Subscription();
+
   product: Product = new Product();
   products: Product[] = [];
   tableMode: boolean = true;
@@ -30,14 +31,6 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
         this.product = prod;
         this.clearProduct();
         this.tableMode = true;
-      },
-      error: () => {},
-    });
-
-    //Needed?
-    this.productRetrieved = this.repo.productRetrieved.subscribe({
-      next: (prod) => {
-        this.product = prod;
       },
       error: () => {},
     });
@@ -75,8 +68,6 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
       } else {
         this.repo.replaceProductAsync(this.product);
       }
-    } else {
-      // Product not complete.
     }
   }
 
@@ -85,7 +76,7 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   }
 
   clearProduct() {
-    // this.product = new Product();
+    this.product = new Product();
     this.repo.getProductCached(0); // this will invalidate the cache.
     this.tableMode = true;
   }
@@ -93,6 +84,6 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.productChanged.unsubscribe();
     this.productsChanged.unsubscribe();
-    this.productRetrieved.unsubscribe();
+    // this.productRetrieved.unsubscribe();
   }
 }

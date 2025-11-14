@@ -20,6 +20,7 @@ import { Supplier } from '../models/supplier.model';
 export class ProductEditorComponent implements OnInit {
   private repo: Repository = inject(Repository);
   private product: Product | undefined = undefined;
+  private formStatus: string = '';
 
   @Output() newProductEvent = new EventEmitter<Product>();
 
@@ -51,23 +52,38 @@ export class ProductEditorComponent implements OnInit {
       this.product = new Product();
     }
 
+    /*
     this.productForm.valueChanges.subscribe((prod) => {
       this.product!.name = prod.name ?? undefined;
       this.product!.category = prod.category ?? undefined;
       this.product!.description = prod.description ?? undefined;
       this.product!.supplier!.supplierId =
-        prod.supplier == null ? 0 : parseInt(prod.supplier);
-      this.product!.price =
-        prod.price == null ? 0 : parseInt(prod.price.replace('$', ''));
+        prod.supplier == '' ? 0 : parseInt(prod.supplier!);
+      this.product!.price = prod.price == '' ? 0 : parseInt(prod.price!.replace('$', ''));
     });
+*/
 
     this.productForm.statusChanges.subscribe((status: FormControlStatus) => {
       if (status === 'VALID') {
-        // if (this.productForm.valid == true) {
+        this.product = new Product();
+        this.product.name = this.productForm.controls.name.value!;
+        this.product!.category = this.productForm.controls.category.value!;
+        this.product!.description = this.productForm.controls.description.value!;
+        this.product!.supplier!.supplierId =
+          this.productForm.controls.supplier.value! == ''
+            ? 0
+            : parseInt(this.productForm.controls.supplier.value!);
+        this.product!.price =
+          this.productForm.controls.price.value == ''
+            ? 0
+            : parseInt(this.productForm.controls.price.value!.replace('$', ''));
+
         this.newProductEvent.emit(this.product);
-        // }
-      } else if (status === 'INVALID') {
-        this.newProductEvent.emit(undefined);
+        this.formStatus == '';
+      } else if (this.formStatus == '' && status === 'INVALID') {
+        this.product = undefined;
+        this.newProductEvent.emit(this.product);
+        this.formStatus = status;
       }
     });
   }
