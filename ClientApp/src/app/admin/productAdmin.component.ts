@@ -22,6 +22,7 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit() {
+    //Product edited event.
     this.productChanged = this.repo.productChanged.subscribe({
       next: (prod) => {
         let index = this.products.findIndex((t) => t.productId === prod.productId);
@@ -33,6 +34,7 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
       error: () => {},
     });
 
+    //Needed?
     this.productRetrieved = this.repo.productRetrieved.subscribe({
       next: (prod) => {
         this.product = prod;
@@ -40,6 +42,7 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
       error: () => {},
     });
 
+    // Add and Delete events.
     this.productsChanged = this.repo.productsChanged.subscribe({
       next: (productList) => {
         this.products = productList;
@@ -53,7 +56,7 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   }
 
   selectProduct(id: number) {
-    this.repo.getProductAsync(id);
+    this.product = this.repo.getProductCached(id);
   }
 
   saveProduct() {

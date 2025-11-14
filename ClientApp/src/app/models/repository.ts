@@ -21,7 +21,7 @@ type productsMetadata = {
 })
 export class Repository {
   private products: Product[] = [];
-  private product: Product = new Product();
+  private product: Product | undefined = new Product();
   private categories: string[] = [];
   private suppliers: Supplier[] = [];
   private supplier: Supplier = new Supplier();
@@ -78,8 +78,17 @@ export class Repository {
     return this.products.slice();
   }
 
-  getProductCached(): Product | undefined {
-    return this.product;
+  getProductCached(id?: number): Product {
+    if (id != undefined) {
+      this.product = this.products.find((p) => p.productId == id);
+    }
+
+    return this.product!;
+  }
+
+  setProductCached(prod: Product) {
+    this.productChanged.next(prod);
+    this.product = prod;
   }
 
   getSuppliersCached(): Supplier[] {
