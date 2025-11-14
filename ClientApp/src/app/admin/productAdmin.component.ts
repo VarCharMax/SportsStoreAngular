@@ -14,10 +14,10 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   private productRetrieved: Subscription = new Subscription();
   private productsChanged: Subscription = new Subscription();
   private productChanged: Subscription = new Subscription();
-
   product: Product = new Product();
   products: Product[] = [];
   tableMode: boolean = true;
+  isFormValid: boolean = false;
 
   constructor() {}
 
@@ -56,14 +56,27 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   }
 
   selectProduct(id: number) {
-    this.product = this.repo.getProductCached(id);
+    this.product = this.repo.getProductCached(id)!;
+  }
+
+  addProductFromEditor(product: Product | undefined) {
+    if (product != undefined) {
+      this.isFormValid = true;
+      this.product = product;
+    } else {
+      this.isFormValid = false;
+    }
   }
 
   saveProduct() {
-    if (this.product!.productId == undefined) {
-      this.repo.createProductAsync(this.product);
+    if (this.product != undefined) {
+      if (this.product.productId == undefined) {
+        this.repo.createProductAsync(this.product);
+      } else {
+        this.repo.replaceProductAsync(this.product);
+      }
     } else {
-      this.repo.replaceProductAsync(this.product);
+      // Product not complete.
     }
   }
 
@@ -72,8 +85,8 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   }
 
   clearProduct() {
-    this.product = new Product();
-    this.repo.clearProductCache();
+    // this.product = new Product();
+    this.repo.getProductCached(0); // this will invalidate the cache.
     this.tableMode = true;
   }
 

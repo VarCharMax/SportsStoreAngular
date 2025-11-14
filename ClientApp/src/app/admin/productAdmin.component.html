@@ -11,7 +11,7 @@
     </tr>
     @for(p of products; track p.productId) {
     <tr>
-      @if (p.productId !== product.productId) {
+      @if (p.productId !== product!.productId) {
       <td>{{ p.productId }}</td>
       <td>{{ p.name }}</td>
       <td>{{ p.category }}</td>
@@ -27,9 +27,14 @@
       </td>
       } @else {
       <td colspan="6" class="bg-light border p-3">
-        <admin-product-editor />
+        <admin-product-editor (newProductEvent)="addProductFromEditor($event)" />
         <div class="text-center">
-          <button class="btn btn-sm btn-primary" (click)="saveProduct()">Save</button>
+          <button
+            class="btn btn-sm btn-primary"
+            [disabled]="!isFormValid"
+            (click)="saveProduct()">
+            Save
+          </button>
           <button class="btn btn-sm btn-info ml-1" (click)="clearProduct()">
             Cancel
           </button>
@@ -51,8 +56,10 @@
 </table>
 } @else {
 <div class="m-2">
-  <admin-product-editor />
-  <button class="btn btn-primary" (click)="saveProduct()">Save</button>
+  <admin-product-editor (newProductEvent)="addProductFromEditor($event)" />
+  <button class="btn btn-primary" [disabled]="!isFormValid" (click)="saveProduct()">
+    Save
+  </button>
   <button class="btn btn-info ml-1" (click)="clearProduct()">Cancel</button>
 </div>
 }

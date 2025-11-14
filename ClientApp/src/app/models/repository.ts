@@ -78,12 +78,12 @@ export class Repository {
     return this.products.slice();
   }
 
-  getProductCached(id?: number): Product {
+  getProductCached(id?: number): Product | undefined {
     if (id != undefined) {
       this.product = this.products.find((p) => p.productId == id);
     }
 
-    return this.product!;
+    return this.product;
   }
 
   setProductCached(prod: Product) {
@@ -101,10 +101,6 @@ export class Repository {
 
   getOrdersCached(): Order[] {
     return this.orders;
-  }
-
-  clearProductCache() {
-    this.product = new Product();
   }
 
   /*

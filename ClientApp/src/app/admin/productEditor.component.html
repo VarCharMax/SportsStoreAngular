@@ -2,10 +2,26 @@
   <div class="form-group">
     <label>Name</label>
     <input class="form-control" formControlName="name" />
+    @if (productForm.get('name')?.invalid && (productForm.get('name')?.dirty ||
+    productForm.get('name')?.touched)) {
+    <div>
+      @if(productForm.get('name')?.errors?.['required']) {
+      <div class="text-danger">Name is required.</div>
+      }
+    </div>
+    }
   </div>
   <div class="form-group">
     <label>Category</label>
     <input class="form-control" formControlName="category" />
+    @if (productForm.get('category')?.invalid && (productForm.get('category')?.dirty ||
+    productForm.get('category')?.touched)) {
+    <div>
+      @if(productForm.get('category')?.errors?.['required']) {
+      <div class="text-danger">Category is required.</div>
+      }
+    </div>
+    }
   </div>
   <div class="form-group">
     <label>Supplier</label>
@@ -13,17 +29,46 @@
       class="form-control"
       formControlName="supplier"
       [compareWith]="compareSuppliers">
+      <option></option>
       @for (s of suppliers; track s) {
       <option [value]="s.supplierId">{{ s.name }}</option>
       }
     </select>
+    @if (productForm.get('supplier')?.invalid && (productForm.get('supplier')?.dirty ||
+    productForm.get('supplier')?.touched)) {
+    <div>
+      @if(productForm.get('supplier')?.errors?.['required']) {
+      <div class="text-danger">Supplier is required.</div>
+      }
+    </div>
+    }
   </div>
   <div class="form-group">
     <label>Description</label>
     <textarea class="form-control" formControlName="description"></textarea>
+    @if (productForm.get('description')?.invalid && (productForm.get('description')?.dirty
+    || productForm.get('description')?.touched)) {
+    <div>
+      @if(productForm.get('description')?.errors?.['required']) {
+      <div class="text-danger">Category is required.</div>
+      }
+    </div>
+    }
   </div>
   <div class="form-group">
     <label>Price</label>
     <input type="number" class="form-control" formControlName="price" />
+    @if (productForm.get('price')?.invalid && (productForm.get('price')?.dirty ||
+    productForm.get('price')?.touched)) {
+    <div>
+      @if(productForm.get('price')?.errors?.['required']) {
+      <div class="text-danger">Price is required.</div>
+      } @if(productForm.get('price')?.errors?.['invalidCurrencyFormat']) {
+      <div class="text-danger">Invalid Currency Format.</div>
+      } @if(productForm.get('price')?.errors?.['outOfRange']) {
+      <div class="text-danger">Amount is out of range.</div>
+      }
+    </div>
+    }
   </div>
 </form>
