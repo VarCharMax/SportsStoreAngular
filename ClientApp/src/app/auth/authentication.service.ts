@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -8,11 +8,12 @@ import { Repository } from '../models/repository';
   providedIn: 'root',
 })
 export class AuthenticationService {
-  constructor(private repo: Repository, private router: Router) {}
+  constructor(private router: Router) {}
+  private repo: Repository = inject(Repository);
 
   authenticated: boolean = false;
-  name: string | undefined;
-  password: string | undefined;
+  name: string | undefined = 'admin';
+  password: string | undefined = 'MySecret123$';
   callbackUrl: string | undefined;
 
   login(): Observable<boolean> {
@@ -21,7 +22,7 @@ export class AuthenticationService {
       map((response) => {
         if (response) {
           this.authenticated = true;
-          this.password = undefined;
+          // this.password = undefined;
           this.router.navigateByUrl(this.callbackUrl || '/admin/overview');
         }
         return this.authenticated;
@@ -36,6 +37,6 @@ export class AuthenticationService {
   logout() {
     this.authenticated = false;
     this.repo.logout();
-    this.router.navigateByUrl('/admin/login');
+    this.router.navigateByUrl('/store');
   }
 }

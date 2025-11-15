@@ -10,5 +10,9 @@ export class Product {
     public price?: number,
     public supplier?: Supplier,
     public ratings?: Rating[],
-  ) {}
+  ) {
+    if (!this.supplier) {
+      this.supplier = new Supplier();
+    }
+  }
 }
