@@ -24,7 +24,6 @@ export class Repository {
   private product: Product | undefined = new Product();
   private categories: string[] = [];
   private suppliers: Supplier[] = [];
-  private supplier: Supplier = new Supplier();
   private orders: Order[] = [];
 
   /*

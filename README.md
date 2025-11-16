@@ -2,7 +2,7 @@
 
 This is just the project code for Adam Freeman's book on combining Angular with MVC Core. It's a fairly old book (Core 3 was current at the time), but still has some good ideas in it and is still worth reading. My main contribution was to upgrade the Angular version and the coding style to version 20. Also, I replaced Freeman's repository code with my own asynchronous variant, which I think is a much more professional implementation. Of course, you can do more advanced repository models.
 
-Freeman's approach appears to be incompatible with the new Angular build mechanism, so I avoided migrating to it. Eventually this will become impractical, presumably, so the development approach demonstated hear probably won't be usable by then.
+Freeman's approach appears to be incompatible with the new Angular build system, so I avoided migrating to it. Eventually this will presumably become impractical, so the development approach demonstrated here probably won't be usable by then.
 
 ## The One That Got Away
 
