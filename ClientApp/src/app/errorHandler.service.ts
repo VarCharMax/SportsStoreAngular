@@ -20,6 +20,8 @@ export class ErrorHandlerService implements HttpInterceptor {
           this.errSubject.next([...(Object.values(resp.error.errors) as string[])]);
         } else if (resp.error.title) {
           this.errSubject.next([resp.error.title]);
+        } else if (resp.message.indexOf('login') > -1 && resp.ok == false) {
+          // Login error - do nothing.
         } else {
           this.errSubject.next(['An HTTP error occurred']);
         }

@@ -14,7 +14,7 @@ Although the code is based on Freeman, all of it was typed by me by hand. I had 
 
 ## Fixes
 
-The author's implementation of the Product Editor is dreadful, and an object lesson in how not to implement such a feature. It's also incompatible with my async re-iplementation of the repository model, as it can't read and write directly to the repository, as the original design required. However, rather than completely re-implementing it, I decided to treat it as I would a legacy code issue, and come up with a fix that does not require substantially rewriting the codebase. But I think it actually came out pretty well.
+The author's implementation of the Product Editor is dreadful, and an object lesson in how not to implement such a feature. It's also incompatible with my async reimplementation of the repository model, as it can't read and write directly to the repository, as the original design required. However, rather than completely re-implementing it, I decided to treat it as I would a legacy code issue, and come up with a fix that does not require substantially rewriting the codebase. But I think it actually came out pretty well.
 
 The main functionality I added was validation and the ability to enable and disable the Save button in the parent component based on the validity of the form in the child.
 
