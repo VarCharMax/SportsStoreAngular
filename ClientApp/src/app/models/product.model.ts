@@ -17,6 +17,8 @@ export class Product {
   }
   isValid(): boolean {
     return (
+      this.productId != undefined &&
+      this.productId > 0 &&
       this.name != undefined &&
       this.name.length > 0 &&
       this.category != undefined &&
