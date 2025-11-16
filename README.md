@@ -2,7 +2,7 @@
 
 This is just the project code for Adam Freeman's book on combining Angular with MVC Core. It's a fairly old book (Core 3 was current at the time), but still has some good ideas in it and is still worth reading. My main contribution was to upgrade the Angular version and the coding style to version 20. Also, I replaced Freeman's repository code with my own asynchronous variant, which I think is a much more professional implementation. Of course, you can do more advanced repository models.
 
-Freeman's approach appears to be incompatible with the new Angular build mechanism, so I avoided migrating to it. Eventually this will become impractical, presumably, so the development approach demonstated hear probably won't be pratical by then.
+Freeman's approach appears to be incompatible with the new Angular build mechanism, so I avoided migrating to it. Eventually this will become impractical, presumably, so the development approach demonstated hear probably won't be usable by then.
 
 ## The One That Got Away
 
@@ -14,9 +14,9 @@ Although the code is based on Freeman, all of it was typed by me by hand. I had 
 
 ## Fixes
 
-The author's implementation of the Product Editor is dreadful, and an object lesson in how not to implement such a feature. It's also incompatible with my async re-iplementation of the repository model, as it can't write directly to the repository, as the original design required. However, rather than completely re-implementing it, I decided to treat it as I would a legacy code issue, and come up with a fix that does not require substantially rewriting the codebase. So the code still isn't that great, but it's compatible with the code as supplied.
+The author's implementation of the Product Editor is dreadful, and an object lesson in how not to implement such a feature. It's also incompatible with my async re-iplementation of the repository model, as it can't read and write directly to the repository, as the original design required. However, rather than completely re-implementing it, I decided to treat it as I would a legacy code issue, and come up with a fix that does not require substantially rewriting the codebase. But I think it actually came out pretty well.
 
-The main functionality I added was the ability to disable the Save button in the parent component based on he validity of the form in the child.
+The main functionality I added was validation and the ability to enable and disable the Save button in the parent component based on the validity of the form in the child.
 
 ## Observations
 
