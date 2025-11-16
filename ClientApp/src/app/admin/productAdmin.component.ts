@@ -74,7 +74,7 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
 
   clearProduct() {
     this.product = new Product();
-    this.repo.getProductCached(0); // this will invalidate the cache.
+    this.repo.getProductCached(0); // this will invalidate the Product cache.
     this.tableMode = true;
   }
 

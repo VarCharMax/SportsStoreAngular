@@ -37,6 +37,7 @@ namespace ServerApp.Controllers
         {
           order.Shipped = true;
           context.SaveChanges();
+          shipped = true;
         }
         else
         {
