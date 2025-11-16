@@ -9,17 +9,11 @@ namespace ServerApp.Controllers
   [ApiController]
   [Authorize(Roles = "Administrator")]
   [AutoValidateAntiforgeryToken]
-  public class OrderValuesController : Controller
+  public class OrderValuesController(DataContext ctx) : Controller
   {
-    private DataContext context;
-
-    public OrderValuesController(DataContext ctx) {
-      context = ctx;
-    }
-
     [HttpGet]
     public IEnumerable<Order> GetOrders() {
-      return context.Orders
+      return ctx.Orders
         .Include(o => o.Products)
         .Include(o => o.Payment);
     }
@@ -31,12 +25,12 @@ namespace ServerApp.Controllers
 
       try
       {
-        Order? order = context.Orders.Find(id);
+        Order? order = ctx.Orders.Find(id);
 
         if (order != null)
         {
           order.Shipped = true;
-          context.SaveChanges();
+          ctx.SaveChanges();
           shipped = true;
         }
         else
@@ -65,8 +59,8 @@ namespace ServerApp.Controllers
 
         if (order.Payment.AuthCode != null)
         {
-          context.Add(order);
-          context.SaveChanges();
+          ctx.Add(order);
+          ctx.SaveChanges();
 
           return Ok(new 
           {
@@ -90,7 +84,7 @@ namespace ServerApp.Controllers
     private decimal GetPrice(IEnumerable<CartLine> lines)
     {
       IEnumerable<long> ids = lines.Select(l => l.ProductId);
-      IEnumerable<Product> prods = context.Products.Where(p => ids.Contains(p.ProductId));
+      IEnumerable<Product> prods = ctx.Products.Where(p => ids.Contains(p.ProductId));
       
       return prods.Select(p => lines.First(l => l.ProductId == p.ProductId).Quantity * p.Price).Sum();
     }

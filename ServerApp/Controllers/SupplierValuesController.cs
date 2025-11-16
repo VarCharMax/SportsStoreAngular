@@ -9,28 +9,21 @@ namespace ServerApp.Controllers
   [Authorize(Roles = "Administrator")]
   [AutoValidateAntiforgeryToken]
   [ApiController]
-  public class SupplierValuesController : Controller
+  public class SupplierValuesController(DataContext ctx) : Controller
   {
-    private readonly DataContext context;
-
-    public SupplierValuesController(DataContext ctx)
-    {
-      context = ctx;
-    }
-
     [HttpGet]
     [AllowAnonymous]
     public IEnumerable<Supplier> GetSuppliers()
     {
-      return context.Suppliers;
+      return ctx.Suppliers;
     }
 
     [HttpPost]
     public IActionResult CreateSupplier([FromBody]SupplierData sdata)
     {
       Supplier s = sdata.Supplier;
-      context.Add(s);
-      context.SaveChanges();
+      ctx.Add(s);
+      ctx.SaveChanges();
       return Ok(s.SupplierId);
     } 
 
@@ -39,16 +32,16 @@ namespace ServerApp.Controllers
     {
       Supplier s = sdata.Supplier;
       s.SupplierId = id;
-      context.Update(s);
-      context.SaveChanges();
+      ctx.Update(s);
+      ctx.SaveChanges();
       return Ok();
     }
 
     [HttpDelete("{id}")]
     public void DeleteSupplier(long id)
     {
-      context.Remove(new Supplier { SupplierId = id });
-      context.SaveChanges();
+      ctx.Remove(new Supplier { SupplierId = id });
+      ctx.SaveChanges();
     }
   }
 }

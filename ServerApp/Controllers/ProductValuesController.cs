@@ -11,20 +11,13 @@ namespace ServerApp.Controllers
   [ApiController]
   [Authorize(Roles = "Administrator")]
   [AutoValidateAntiforgeryToken]
-  public class ProductValuesController : ControllerBase
+  public class ProductValuesController(DataContext ctx) : ControllerBase
   {
-    private readonly DataContext context;
-
-    public ProductValuesController(DataContext ctx)
-    {
-      context = ctx;
-    }
-
     [HttpGet("{id}")]
     [AllowAnonymous]
     public async Task<ActionResult<Product>> GetProduct(long id)
     {
-      var result = await context.Products
+      var result = await ctx.Products
         .Include(p => p.Supplier)
         .ThenInclude(s => s!.Products!) // Suppress possible null warning
         .Include(p => p.Ratings)
@@ -51,7 +44,7 @@ namespace ServerApp.Controllers
     [AllowAnonymous]
     public ActionResult<IEnumerable<Product>> GetProducts(string category = "", string search = "", bool related = false, bool metadata = false)
     {
-      IQueryable<Product> query = context.Products;
+      IQueryable<Product> query = ctx.Products;
 
       if (!string.IsNullOrWhiteSpace(category))
       {
@@ -96,11 +89,11 @@ namespace ServerApp.Controllers
         Supplier s = new() { SupplierId = pdata.SupplierId.Value };
         p.Supplier = s;
 
-        context.Attach(p.Supplier);
+        ctx.Attach(p.Supplier);
       } 
         
-      context.Add(p);
-      context.SaveChanges();
+      ctx.Add(p);
+      ctx.SaveChanges();
 
       return Ok(p.ProductId);
     }
@@ -112,11 +105,11 @@ namespace ServerApp.Controllers
         p.ProductId = id;
         if (p.Supplier != null && p.Supplier.SupplierId != 0)
         {
-          context.Attach(p.Supplier);
+          ctx.Attach(p.Supplier);
         } 
         
-        context.Update(p);
-        context.SaveChanges();
+        ctx.Update(p);
+        ctx.SaveChanges();
         
         return Ok(true);
     }
@@ -124,7 +117,7 @@ namespace ServerApp.Controllers
     [HttpPatch("{id}")]
     public ActionResult<bool> UpdateProduct(long id, [FromBody] JsonPatchDocument<ProductData> patch)
     {
-      Product product = context.Products.Include(p => p.Supplier).First(p => p.ProductId == id);
+      Product product = ctx.Products.Include(p => p.Supplier).First(p => p.ProductId == id);
       ProductData pdata = new() { Product = product };
 
       patch.ApplyTo(pdata, ModelState);
@@ -133,10 +126,10 @@ namespace ServerApp.Controllers
       {
         if (product.Supplier != null && product.Supplier.SupplierId != 0)
         {
-          context.Attach(product.Supplier);
+          ctx.Attach(product.Supplier);
         }
         
-        context.SaveChanges();
+        ctx.SaveChanges();
         
         return Ok(true);
       }
@@ -151,8 +144,8 @@ namespace ServerApp.Controllers
       bool result = true;
       try
       {
-        context.Products.Remove(new Product { ProductId = id });
-        context.SaveChanges();
+        ctx.Products.Remove(new Product { ProductId = id });
+        ctx.SaveChanges();
       }
       catch (Exception)
       {
@@ -168,7 +161,7 @@ namespace ServerApp.Controllers
       return Ok(new
       {
         data = products,
-        categories = context.Products.Select(p => p.Category).Distinct().OrderBy(c => c)
+        categories = ctx.Products.Select(p => p.Category).Distinct().OrderBy(c => c)
       }
       );
     }

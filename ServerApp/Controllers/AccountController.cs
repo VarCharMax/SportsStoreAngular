@@ -4,17 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ServerApp.Controllers
 {
-  public class AccountController : Controller
+  public class AccountController(UserManager<IdentityUser> userMgr, SignInManager<IdentityUser> signInMgr) : Controller
   {
-    private readonly UserManager<IdentityUser> userManager;
-    private readonly SignInManager<IdentityUser> signInManager;
-
-    public AccountController(UserManager<IdentityUser> userMgr, SignInManager<IdentityUser> signInMgr)
-    {
-      userManager = userMgr;
-      signInManager = signInMgr;
-    }
-
     [HttpGet]
     public IActionResult Login(string returnUrl)
     {
@@ -41,19 +32,19 @@ namespace ServerApp.Controllers
     [HttpPost]
     public async Task<IActionResult> Logout(string redirectUrl)
     {
-      await signInManager.SignOutAsync();
+      await signInMgr.SignOutAsync();
 
       return Redirect(redirectUrl ?? "/");
     }
 
     private async Task<bool> DoLogin(LoginViewModel creds)
     {
-      IdentityUser? user = await userManager.FindByNameAsync(creds.Name);
+      IdentityUser? user = await userMgr.FindByNameAsync(creds.Name);
 
       if (user != null)
       {
-        await signInManager.SignOutAsync();
-        Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, creds.Password, false, false);
+        await signInMgr.SignOutAsync();
+        Microsoft.AspNetCore.Identity.SignInResult result = await signInMgr.PasswordSignInAsync(user, creds.Password, false, false);
 
         return result.Succeeded;
       }
@@ -74,7 +65,7 @@ namespace ServerApp.Controllers
     [HttpPost("/api/account/logout")]
     public async Task<IActionResult> Logout()
     {
-      await signInManager.SignOutAsync();
+      await signInMgr.SignOutAsync();
       return Ok();
     }
   }
