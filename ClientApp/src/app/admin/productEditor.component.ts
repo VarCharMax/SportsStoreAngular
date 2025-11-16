@@ -21,38 +21,6 @@ export class ProductEditorComponent implements OnInit {
   private product: Product | undefined = undefined;
   private formStatus: string = '';
 
-  private toggleStatus = (status: string): void => {
-    this.product = new Product();
-    this.product.name = this.productForm.controls.name.value!;
-    this.product.category = this.productForm.controls.category.value!;
-    this.product.description = this.productForm.controls.description.value!;
-    this.product.supplier!.supplierId =
-      this.productForm.controls.supplier.value! == ''
-        ? 0
-        : parseInt(this.productForm.controls.supplier.value!);
-    this.product!.price =
-      this.productForm.controls.price.value == ''
-        ? 0
-        : parseInt(this.productForm.controls.price.value!.replace('$', ''));
-
-    this.newProductEvent.emit(this.product);
-    this.formStatus == '';
-  };
-
-  private checkStatus = (status: FormControlStatus): void => {
-    switch (status) {
-      case 'PENDING':
-      case 'INVALID':
-        this.formStatus = '';
-        break;
-      case 'VALID':
-        this.formStatus = status;
-        break;
-    }
-    this.toggleStatus(status);
-    return;
-  };
-
   @Output() newProductEvent = new EventEmitter<Product>();
 
   productForm = new FormGroup({
@@ -67,9 +35,9 @@ export class ProductEditorComponent implements OnInit {
 
   ngOnInit() {
     // Will be object for edit, undefined for new.
-    this.product = this.repo.getProductCached();
+    this.product = this.repo.getProductCached() || new Product();
 
-    if (this.product != undefined && this.product.productId !== 0) {
+    if (this.product.isValid() == true) {
       this.productForm.setValue({
         name: this.product.name!,
         category: this.product.category!,
@@ -77,34 +45,26 @@ export class ProductEditorComponent implements OnInit {
         price: this.product.price!.toString(),
         supplier: this.product.supplier!.supplierId!.toString() ?? null,
       });
-    } else {
-      this.product = new Product();
     }
 
     // Save will be disabled for new product.
     this.newProductEvent.emit(this.product);
 
-    Object.keys(this.productForm.controls).forEach((key) => {
-      this.productForm.get(key)!.statusChanges.subscribe(this.checkStatus);
-    });
-
     this.productForm.statusChanges.subscribe((status: FormControlStatus) => {
-      if (status === 'VALID') {
-        this.product = new Product();
-        this.product.name = this.productForm.controls.name.value!;
-        this.product.category = this.productForm.controls.category.value!;
-        this.product.description = this.productForm.controls.description.value!;
-        this.product.supplier!.supplierId = parseInt(
-          this.productForm.controls.supplier.value!,
-        );
-        this.product!.price = parseInt(
-          this.productForm.controls.price.value!.replace('$', ''),
-        );
-
+      this.product!.productId = this.product?.productId;
+      this.product!.name = this.productForm.controls.name.value!;
+      this.product!.category = this.productForm.controls.category.value!;
+      this.product!.description = this.productForm.controls.description.value!;
+      this.product!.supplier!.supplierId = parseInt(
+        this.productForm.controls.supplier.value!,
+      );
+      this.product!.price = parseInt(
+        this.productForm.controls.price.value!.replace('$', ''),
+      );
+      if (status == 'VALID') {
         this.newProductEvent.emit(this.product);
-        this.formStatus == '';
+        this.formStatus = '';
       } else if (this.formStatus == '' && status === 'INVALID') {
-        this.product = undefined;
         this.newProductEvent.emit(this.product);
         this.formStatus = status;
       }
