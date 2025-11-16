@@ -64,7 +64,7 @@ export class ProductEditorComponent implements OnInit {
       if (status == 'VALID') {
         this.newProductEvent.emit(this.product);
         this.formStatus = '';
-      } else if (this.formStatus == '' && status === 'INVALID') {
+      } else if (this.formStatus == '' && status == 'INVALID') {
         this.newProductEvent.emit(this.product);
         this.formStatus = status;
       }
