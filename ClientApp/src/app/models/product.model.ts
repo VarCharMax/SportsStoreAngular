@@ -15,4 +15,18 @@ export class Product {
       this.supplier = new Supplier();
     }
   }
+  isValid(): boolean {
+    return (
+      this.name != undefined &&
+      this.name.length > 0 &&
+      this.category != undefined &&
+      this.category.length > 0 &&
+      this.description != undefined &&
+      this.description.length > 0 &&
+      this.price != undefined &&
+      this.price > 0 &&
+      this.supplier != undefined &&
+      this.supplier.supplierId! > 0
+    );
+  }
 }

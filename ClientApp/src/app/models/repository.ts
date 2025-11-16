@@ -86,11 +86,6 @@ export class Repository {
     return this.product;
   }
 
-  setProductCached(prod: Product) {
-    this.productChanged.next(prod);
-    this.product = prod;
-  }
-
   getSuppliersCached(): Supplier[] {
     return this.suppliers.slice();
   }

@@ -11,7 +11,7 @@ namespace ServerApp.Controllers
   [ApiController]
   public class SupplierValuesController : Controller
   {
-    private DataContext context;
+    private readonly DataContext context;
 
     public SupplierValuesController(DataContext ctx)
     {

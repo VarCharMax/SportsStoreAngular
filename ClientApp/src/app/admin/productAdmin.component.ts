@@ -11,7 +11,6 @@ import { ProductEditorComponent } from './productEditor.component';
 })
 export class ProductAdminComponent implements OnInit, OnDestroy {
   private repo: Repository = inject(Repository);
-  // private productRetrieved: Subscription = new Subscription();
   private productsChanged: Subscription = new Subscription();
   private productChanged: Subscription = new Subscription();
 
@@ -23,14 +22,13 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit() {
-    //Product edited event.
+    // Product edited event.
     this.productChanged = this.repo.productChanged.subscribe({
       next: (prod) => {
         let index = this.products.findIndex((t) => t.productId === prod.productId);
         this.products[index] = prod;
         this.product = prod;
         this.clearProduct();
-        this.tableMode = true;
       },
       error: () => {},
     });
@@ -40,7 +38,6 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
       next: (productList) => {
         this.products = productList;
         this.clearProduct();
-        this.tableMode = true;
       },
       error: () => {},
     });
@@ -52,10 +49,10 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
     this.product = this.repo.getProductCached(id)!;
   }
 
-  addProductFromEditor(product: Product | undefined) {
-    if (product != undefined) {
+  addProductFromEditor(prod: Product) {
+    if (prod.isValid()) {
       this.isFormValid = true;
-      this.product = product;
+      this.product = prod;
     } else {
       this.isFormValid = false;
     }
@@ -84,6 +81,5 @@ export class ProductAdminComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.productChanged.unsubscribe();
     this.productsChanged.unsubscribe();
-    // this.productRetrieved.unsubscribe();
   }
 }

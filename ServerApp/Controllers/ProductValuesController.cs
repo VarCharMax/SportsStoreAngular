@@ -13,7 +13,7 @@ namespace ServerApp.Controllers
   [AutoValidateAntiforgeryToken]
   public class ProductValuesController : ControllerBase
   {
-    private DataContext context;
+    private readonly DataContext context;
 
     public ProductValuesController(DataContext ctx)
     {
