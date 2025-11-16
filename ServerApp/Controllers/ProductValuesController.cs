@@ -66,7 +66,7 @@ namespace ServerApp.Controllers
           p.Description.ToLower().Contains(searchLower));
       }
 
-      if (related && HttpContext.User.IsInRole("Administrator"))
+      if (related)
       {
         query = query.Include(p => p.Supplier).Include(p => p.Ratings);
         List<Product> data = [.. query];
