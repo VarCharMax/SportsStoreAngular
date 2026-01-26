@@ -228,7 +228,7 @@ FakesAssemblies/
 **/*.Server/ModelManifest.xml
 _Pvt_Extensions
 
-**/wwwroot/bundles
+**/wwwroot/lib
 
 # Paket dependency manager
 .paket/paket.exe
